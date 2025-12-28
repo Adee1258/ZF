@@ -21,9 +21,9 @@
       };
 
       // API Configuration
-      const API_BASE = location.hostname.includes("localhost")
-        ? "http://localhost:5000"
-        : "";
+      const API_BASE = location.hostname.endsWith("zdspices.pk")
+        ? "https://api.zdspices.pk"
+        : `http://${location.hostname}:5000`;
     </script>
     <style>
       body {
@@ -64,6 +64,11 @@
       .product-image-section {
         min-height: 500px;
       }
+      @media (max-width: 640px) {
+        .product-image-section {
+          min-height: 360px;
+        }
+      }
       .toast {
         animation: slideIn 0.3s ease-out;
       }
@@ -84,17 +89,18 @@
     <nav
       class="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-lg z-50 transition-all duration-300"
     >
-      <div class="mx-auto px-0">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center py-4">
           <div class="flex items-center space-x-6 pl-4 md:pl-8">
-            <img
+          <img
               src="/images/logo.jpeg"
               alt="Logo"
-              class="h-24 w-24 object-contain rounded-full shadow-2xl border-4 border-orange-500 ring-4 ring-orange-200"
+              id="brandLogo"
+              class="h-16 w-16 md:h-24 md:w-24 object-contain rounded-full shadow-2xl border-4 border-orange-500 ring-4 ring-orange-200"
               onerror="this.src='https://via.placeholder.com/96?text=ZD';"
             />
             <h1
-              class="text-2xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-500 to-yellow-600 tracking-wide"
+              class="hidden sm:block text-2xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-500 to-yellow-600 tracking-wide"
             >
               ZIKRIYA DARBAR FOOD PRODUCTS
             </h1>
@@ -102,30 +108,25 @@
           <div class="hidden md:flex items-center space-x-8 pr-4 md:pr-8">
             <a
               href="index.html"
-              class="text-gray-700 hover:text-orange-600 font-medium transition duration-300 text-lg"
+              class="px-4 py-2 rounded-full text-gray-700 hover:text-orange-600 hover:bg-orange-50 ring-1 ring-transparent hover:ring-orange-300 font-medium transition duration-300 text-lg"
               >Home</a
             >
             <a
               href="/#products"
-              class="text-gray-700 hover:text-orange-600 font-medium transition duration-300 text-lg"
+              class="px-4 py-2 rounded-full text-gray-700 hover:text-orange-600 hover:bg-orange-50 ring-1 ring-transparent hover:ring-orange-300 font-medium transition duration-300 text-lg"
               >Products</a
             >
             <a
               href="About.html"
-              class="text-gray-700 hover:text-orange-600 font-medium transition duration-300 text-lg"
+              class="px-4 py-2 rounded-full text-gray-700 hover:text-orange-600 hover:bg-orange-50 ring-1 ring-transparent hover:ring-orange-300 font-medium transition duration-300 text-lg"
               >About Us</a
             >
             <a
               href="contact.html"
-              class="text-gray-700 hover:text-orange-600 font-medium transition duration-300 text-lg"
+              class="px-4 py-2 rounded-full text-gray-700 hover:text-orange-600 hover:bg-orange-50 ring-1 ring-transparent hover:ring-orange-300 font-medium transition duration-300 text-lg"
               >Contact Us</a
             >
-            <a
-              href="/admin"
-              class="bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition duration-300"
-            >
-              Admin Panel
-            </a>
+            
           </div>
           <div class="md:hidden flex items-center space-x-4 pr-4">
             <button onclick="toggleMobileMenu()" class="p-3">
@@ -135,46 +136,41 @@
         </div>
         <div
           id="mobileMenu"
-          class="hidden md:hidden absolute top-full left-0 w-full bg-white/98 backdrop-blur-lg shadow-2xl"
+          class="hidden md:hidden fixed inset-0 top-[72px] w-full bg-white/98 backdrop-blur-lg shadow-2xl overflow-y-auto"
         >
-          <div class="flex flex-col items-center py-8 space-y-6">
+          <div class="flex flex-col items-center py-8 space-y-5">
             <a
               href="/"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
+              class="text-lg md:text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               onclick="toggleMobileMenu()"
               >Home</a
             >
             <a
               href="/#products"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
+              class="text-lg md:text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               onclick="toggleMobileMenu()"
               >Products</a
             >
             <a
               href="/about.html"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
+              class="text-lg md:text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               onclick="toggleMobileMenu()"
               >About Us</a
             >
             <a
               href="/contact.html"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
+              class="text-lg md:text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               onclick="toggleMobileMenu()"
               >Contact Us</a
             >
-            <a
-              href="/admin"
-              class="bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold px-8 py-4 rounded-full shadow-lg text-xl"
-            >
-              Admin Panel
-            </a>
+            
           </div>
         </div>
       </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="pt-28 pb-20">
+    <main class="pt-24 md:pt-28 pb-20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div id="loadingSpinner" class="text-center py-10">
           <i
@@ -376,10 +372,78 @@
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-8 mt-20">
-      <div class="max-w-7xl mx-auto px-4">
-        <p class="text-center text-gray-400">
-          &copy; 2025 ZIKRIYA DARBAR FOOD PRODUCTS. Made with ❤️ in Pakistan
-        </p>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-4 gap-8">
+          <div>
+            <h3 class="text-lg font-bold mb-4">ZIKRIYA DARBAR FOOD PRODUCTS</h3>
+            <p class="text-gray-400">
+              Premium spices & fish for B2B. Fresh, authentic, delivered fast.
+            </p>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+            <ul class="space-y-2 text-gray-400">
+              <li><a href="/" class="hover:text-white transition">Home</a></li>
+              <li>
+                <a href="/index.html#products" class="hover:text-white transition"
+                  >Products</a
+                >
+              </li>
+              <li>
+                <a href="/about.html" class="hover:text-white transition"
+                  >About Us</a
+                >
+              </li>
+              <li>
+                <a href="/contact.html" class="hover:text-white transition"
+                  >Contact</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Support</h4>
+            <ul class="space-y-2 text-gray-400">
+              <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+              <li>
+                <a href="#" class="hover:text-white transition">Shipping</a>
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition">Returns</a>
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition"
+                  >Privacy Policy</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Follow Us</h4>
+            <div class="flex space-x-4">
+              <a href="#" class="text-gray-400 hover:text-white transition"
+                ><i class="fab fa-facebook-f text-xl"></i
+              ></a>
+              <a href="#" class="text-gray-400 hover:text-white transition"
+                ><i class="fab fa-instagram text-xl"></i
+              ></a>
+              <a href="#" class="text-gray-400 hover:text-white transition"
+                ><i class="fab fa-twitter text-xl"></i
+              ></a>
+            </div>
+            <p class="text-sm text-gray-400 mt-4">
+              Contact: 03327372364 | Email: zdspices@gmail.com
+            </p>
+          </div>
+        </div>
+        <div
+          class="border-t border-gray-700 mt-8 pt-4 text-center text-gray-400"
+        >
+          <p>
+            &copy; 2025 ZIKRIYA DARBAR FOOD PRODUCTS. All rights reserved. |
+            Made with ❤️ in Pakistan
+          </p>
+        </div>
       </div>
     </footer>
 
@@ -389,7 +453,9 @@
       let qty = 1;
 
       function toggleMobileMenu() {
-        document.getElementById("mobileMenu").classList.toggle("hidden");
+        const el = document.getElementById("mobileMenu");
+        el.classList.toggle("hidden");
+        document.body.classList.toggle("overflow-hidden", !el.classList.contains("hidden"));
       }
 
       async function loadProduct() {
@@ -464,7 +530,7 @@
         thumbs.innerHTML = images
           .map(
             (img, i) => `
-          <img src="${img}" onclick="goToSlide(${i})" class="w-16 h-16 object-cover rounded cursor-pointer border-2 ${
+          <img src="${img}" onclick="goToSlide(${i})" class="w-12 h-12 md:w-16 md:h-16 object-cover rounded cursor-pointer border-2 ${
               i === 0 ? "border-blue-500" : "border-gray-200"
             }">
         `
@@ -642,6 +708,22 @@
       }
 
       loadProduct();
+      (function () {
+        var c = 0;
+        var t;
+        var el = document.getElementById("brandLogo");
+        if (!el) return;
+        el.addEventListener("click", function () {
+          c++;
+          clearTimeout(t);
+          t = setTimeout(function () {
+            c = 0;
+          }, 3000);
+          if (c >= 5) {
+            window.location.href = "/admin/login.html";
+          }
+        });
+      })();
     </script>
   </body>
 </html>

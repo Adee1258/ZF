@@ -39,18 +39,19 @@
     <nav
       class="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-lg z-50 transition-all duration-300"
     >
-      <div class="mx-auto px-0">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center py-4">
           <!-- Left: Logo + Name -->
           <div class="flex items-center space-x-6 pl-4 md:pl-8">
             <img
               src="/images/logo.jpeg"
               alt="ZIKRIYA DARBAR FOOD PRODUCTS Logo"
-              class="h-24 w-24 object-contain rounded-full shadow-2xl border-4 border-orange-500 ring-4 ring-orange-200"
+              id="brandLogo"
+              class="h-16 w-16 md:h-24 md:w-24 object-contain rounded-full shadow-2xl border-4 border-orange-500 ring-4 ring-orange-200"
               onerror="this.src='https://via.placeholder.com/96?text=ZD';"
             />
             <h1
-              class="text-2xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-500 to-yellow-600 tracking-wide"
+              class="hidden sm:block text-2xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-500 to-yellow-600 tracking-wide"
             >
               ZIKRIYA DARBAR FOOD PRODUCTS
             </h1>
@@ -60,30 +61,25 @@
           <div class="hidden md:flex items-center space-x-8 pr-4 md:pr-8">
             <a
               href="index.html"
-              class="text-gray-700 hover:text-orange-600 font-medium transition duration-300 text-lg"
+              class="px-4 py-2 rounded-full text-gray-700 hover:text-orange-600 hover:bg-orange-50 ring-1 ring-transparent hover:ring-orange-300 font-medium transition duration-300 text-lg"
               >Home</a
             >
             <a
-              href="#products"
-              class="text-gray-700 hover:text-orange-600 font-medium transition duration-300 text-lg"
+              href="index.html#products"
+              class="px-4 py-2 rounded-full text-gray-700 hover:text-orange-600 hover:bg-orange-50 ring-1 ring-transparent hover:ring-orange-300 font-medium transition duration-300 text-lg"
               >Products</a
             >
             <a
               href="About.html"
-              class="text-gray-700 hover:text-orange-600 font-medium transition duration-300 text-lg"
+              class="px-4 py-2 rounded-full text-gray-700 hover:text-orange-600 hover:bg-orange-50 ring-1 ring-transparent hover:ring-orange-300 font-medium transition duration-300 text-lg"
               >About Us</a
             >
             <a
               href="contact.html"
-              class="text-gray-700 hover:text-orange-600 font-medium transition duration-300 text-lg"
+              class="px-4 py-2 rounded-full text-gray-700 hover:text-orange-600 hover:bg-orange-50 ring-1 ring-transparent hover:ring-orange-300 font-medium transition duration-300 text-lg"
               >Contact Us</a
             >
-            <a
-              href="/admin"
-              class="bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold px-6 py-3 rounded-full shadow-lg hover:shadow-xl hover:from-orange-600 hover:to-red-700 transition duration-300"
-            >
-              Admin Panel
-            </a>
+            
           </div>
 
           <!-- Mobile Menu Button -->
@@ -97,39 +93,34 @@
         <!-- Mobile Menu -->
         <div
           id="mobileMenu"
-          class="hidden md:hidden absolute top-full left-0 w-full bg-white/98 backdrop-blur-lg shadow-2xl"
+          class="hidden md:hidden fixed inset-0 top-[72px] w-full bg-white/98 backdrop-blur-lg shadow-2xl overflow-y-auto"
         >
-          <div class="flex flex-col items-center py-8 space-y-6">
+          <div class="flex flex-col items-center py-8 space-y-5">
             <a
               href="index.html"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
+              class="text-lg md:text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               onclick="toggleMobileMenu()"
               >Home</a
             >
             <a
-              href="#products"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
+              href="index.html#products"
+              class="text-lg md:text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               onclick="toggleMobileMenu()"
               >Products</a
             >
             <a
               href="About.html"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
+              class="text-lg md:text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               onclick="toggleMobileMenu()"
               >About Us</a
             >
             <a
               href="contact.html"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
+              class="text-lg md:text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               onclick="toggleMobileMenu()"
               >Contact Us</a
             >
-            <a
-              href="/admin"
-              class="bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold px-8 py-4 rounded-full shadow-lg text-xl"
-            >
-              Admin Panel
-            </a>
+            
           </div>
         </div>
       </div>
@@ -137,7 +128,7 @@
 
     <!-- Hero Section -->
     <section
-      class="hero-contact h-96 flex items-center justify-center text-center text-white pt-20"
+      class="hero-contact min-h-[60vh] flex items-center justify-center text-center text-white pt-20 sm:pt-24"
     >
       <div>
         <h1 class="text-5xl md:text-7xl font-bold mb-4">
@@ -205,8 +196,8 @@
                 target="_blank"
                 class="flex items-center space-x-6 contact-icon"
               >
-                <div class="bg-green-100 p-6 rounded-full">
-                  <i class="fab fa-whatsapp text-5xl text-green-600"></i>
+                <div class="bg-green-100 p-4 md:p-6 rounded-full">
+                  <i class="fab fa-whatsapp text-4xl md:text-5xl text-green-600"></i>
                 </div>
                 <div>
                   <p class="text-2xl font-bold">WhatsApp</p>
@@ -220,8 +211,8 @@
                 href="tel:+923327372364"
                 class="flex items-center space-x-6 contact-icon"
               >
-                <div class="bg-blue-100 p-6 rounded-full">
-                  <i class="fas fa-phone-alt text-5xl text-blue-600"></i>
+                <div class="bg-blue-100 p-4 md:p-6 rounded-full">
+                  <i class="fas fa-phone-alt text-4xl md:text-5xl text-blue-600"></i>
                 </div>
                 <div>
                   <p class="text-2xl font-bold">Call Us</p>
@@ -235,8 +226,8 @@
                 href="mailto:zdspices@gmail.com"
                 class="flex items-center space-x-6 contact-icon"
               >
-                <div class="bg-red-100 p-6 rounded-full">
-                  <i class="fas fa-envelope text-5xl text-red-600"></i>
+                <div class="bg-red-100 p-4 md:p-6 rounded-full">
+                  <i class="fas fa-envelope text-4xl md:text-5xl text-red-600"></i>
                 </div>
                 <div>
                   <p class="text-2xl font-bold">Email</p>
@@ -273,7 +264,7 @@
 
             <!-- Updated Map -->
             <div
-              class="mt-12 w-full h-96 rounded-xl overflow-hidden shadow-2xl border-4 border-orange-300"
+              class="mt-12 w-full h-72 sm:h-96 rounded-xl overflow-hidden shadow-2xl border-4 border-orange-300"
             >
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3457.567890123456!2d71.475361!3d30.165361!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzDCsDA5JzU1LjMiTiA3McKwMjgnMzEuMyJF!5e0!3m2!1sen!2spk!4v1734567890123!5m2!1sen!2spk"
@@ -317,9 +308,7 @@
                   >About Us</a
                 >
               </li>
-              <li>
-                <a href="/admin" class="hover:text-white transition">Admin</a>
-              </li>
+              
             </ul>
           </div>
           <div>
@@ -352,6 +341,9 @@
                 ><i class="fab fa-twitter text-xl"></i
               ></a>
             </div>
+            <p class="text-sm text-gray-400 mt-4">
+              Contact: 03327372364 | Email: zdspices@gmail.com
+            </p>
           </div>
         </div>
         <div
@@ -367,8 +359,13 @@
 
     <script>
       function toggleMobileMenu() {
-        document.getElementById("mobileMenu").classList.toggle("hidden");
+        const el = document.getElementById("mobileMenu");
+        el.classList.toggle("hidden");
+        document.body.classList.toggle("overflow-hidden", !el.classList.contains("hidden"));
       }
+      const API_BASE = location.hostname.endsWith("zdspices.pk")
+        ? "https://api.zdspices.pk"
+        : `http://${location.hostname}:5000`;
 
       // Form Submit
       document
@@ -381,7 +378,7 @@
           const message = document.getElementById("message").value;
 
           try {
-            const res = await fetch("/api/contact", {
+            const res = await fetch(`${API_BASE}/api/contact`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ name, phone, email, message }),
@@ -393,6 +390,22 @@
             alert("Error sending message. Try WhatsApp or Call.");
           }
         });
+      (function () {
+        var c = 0;
+        var t;
+        var el = document.getElementById("brandLogo");
+        if (!el) return;
+        el.addEventListener("click", function () {
+          c++;
+          clearTimeout(t);
+          t = setTimeout(function () {
+            c = 0;
+          }, 3000);
+          if (c >= 5) {
+            window.location.href = "/admin/login.html";
+          }
+        });
+      })();
     </script>
   </body>
 </html>
