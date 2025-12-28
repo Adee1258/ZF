@@ -552,7 +552,9 @@
     </div>
 
     <script>
-      const API_BASE = "http://localhost:5000";
+      const API_BASE = location.hostname.includes("localhost")
+        ? "http://localhost:5000"
+        : "";
       const token = localStorage.getItem("adminToken");
       if (!token) {
         alert("Pehle login karo bhai!");

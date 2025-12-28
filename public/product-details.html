@@ -21,7 +21,9 @@
       };
 
       // API Configuration
-      const API_BASE = "http://localhost:5000";
+      const API_BASE = location.hostname.includes("localhost")
+        ? "http://localhost:5000"
+        : "";
     </script>
     <style>
       body {

@@ -78,7 +78,9 @@
 
     <script>
       // API BASE for backend
-      const API_BASE = "http://localhost:5000";
+      const API_BASE = location.hostname.includes("localhost")
+        ? "http://localhost:5000"
+        : "";
 
       document
         .getElementById("loginForm")

@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://api.zdspices.pk/api/:path*"
+    },
+    {
+      "source": "/uploads/:path*",
+      "destination": "https://api.zdspices.pk/uploads/:path*"
+    },
+    {
+      "source": "/admin-dp/:path*",
+      "destination": "https://api.zdspices.pk/admin-dp/:path*"
+    }
+  ]
+}
