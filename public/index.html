@@ -21,7 +21,9 @@
       };
 
       // API Configuration
-      const API_BASE = "http://localhost:5000";
+      const API_BASE = location.hostname.includes("zdspices.pk")
+        ? "https://api.zdspices.pk"
+        : `http://${location.hostname}:5000`;
     </script>
     <style>
       .hero-bg {
@@ -130,7 +132,7 @@
               Contact Us
             </a>
             <a
-              href="/zikriya-foods-frontend/admin/login.html"
+              href="/admin/login.html"
               class="bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold px-6 py-3 rounded-full shadow-lg hover:shadow-xl hover:from-orange-600 hover:to-red-700 transition duration-300"
             >
               Admin Panel
@@ -164,7 +166,7 @@
               >Products</a
             >
             <a
-              href="/about.html"
+              href="/About.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               onclick="toggleMobileMenu()"
               >About Us</a
@@ -177,7 +179,7 @@
               >Contact Us</a
             >
             <a
-              href="/zikriya-foods-frontend/admin/login.html"
+              href="/admin/login.html"
               class="bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold px-8 py-4 rounded-full shadow-lg text-xl"
             >
               Admin Panel
@@ -313,7 +315,7 @@
               ></a>
             </div>
             <p class="text-sm text-gray-400 mt-4">
-              Contact: +92 300 1234567 | Email: info@masalasupply.pk
+              Contact: 03327372364 | Email: zdspices@gmail.com
             </p>
           </div>
         </div>

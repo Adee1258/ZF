@@ -17,6 +17,9 @@
       tailwind.config = {
         theme: { extend: { fontFamily: { sans: ["Poppins", "sans-serif"] } } },
       };
+      const API_BASE = location.hostname.includes("zdspices.pk")
+        ? "https://api.zdspices.pk"
+        : `http://${location.hostname}:5000`;
     </script>
     <style>
       .hero-contact {
@@ -352,6 +355,9 @@
                 ><i class="fab fa-twitter text-xl"></i
               ></a>
             </div>
+            <p class="text-sm text-gray-400 mt-4">
+              Contact: 03327372364 | Email: zdspices@gmail.com
+            </p>
           </div>
         </div>
         <div
@@ -381,7 +387,7 @@
           const message = document.getElementById("message").value;
 
           try {
-            const res = await fetch("/api/contact", {
+            const res = await fetch(`${API_BASE}/api/contact`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ name, phone, email, message }),

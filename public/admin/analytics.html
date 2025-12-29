@@ -87,7 +87,7 @@
             src="/admin-dp/logo.jpeg"
             alt="Admin"
             class="w-16 h-16 rounded-full mx-auto mb-2 border-2 border-white object-cover"
-            onerror="this.onerror=null;this.src='/admin-dp/logo.jpeg';"
+            onerror="this.onerror=null;this.src='/images/logo.jpeg';"
           />
           <p id="sidebarAdminName" class="font-semibold text-white">Admin</p>
           <p class="text-xs text-blue-100">Administrator</p>
@@ -220,7 +220,9 @@
     </div>
 
     <script>
-      const API_BASE = "http://localhost:5000";
+      const API_BASE = location.hostname.includes("zdspices.pk")
+        ? "https://api.zdspices.pk"
+        : `http://${location.hostname}:5000`;
       const token = localStorage.getItem("adminToken");
       if (!token) window.location.href = "/admin/login.html";
 
@@ -235,10 +237,10 @@
 
         try {
           const [ordersRes, productsRes] = await Promise.all([
-            fetch("/api/admin/orders", {
+            fetch(`${API_BASE}/api/admin/orders`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            fetch("/api/admin/products", {
+            fetch(`${API_BASE}/api/admin/products`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
           ]);

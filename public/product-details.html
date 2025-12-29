@@ -21,7 +21,9 @@
       };
 
       // API Configuration
-      const API_BASE = "http://localhost:5000";
+      const API_BASE = location.hostname.includes("zdspices.pk")
+        ? "https://api.zdspices.pk"
+        : `http://${location.hostname}:5000`;
     </script>
     <style>
       body {
@@ -149,7 +151,7 @@
               >Products</a
             >
             <a
-              href="/about.html"
+              href="/About.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               onclick="toggleMobileMenu()"
               >About Us</a
@@ -375,9 +377,12 @@
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-8 mt-20">
       <div class="max-w-7xl mx-auto px-4">
-        <p class="text-center text-gray-400">
-          &copy; 2025 ZIKRIYA DARBAR FOOD PRODUCTS. Made with ❤️ in Pakistan
-        </p>
+        <div class="text-center text-gray-400">
+          <p>Contact: 03327372364 | Email: zdspices@gmail.com</p>
+          <p class="mt-2">
+            &copy; 2025 ZIKRIYA DARBAR FOOD PRODUCTS. Made with ❤️ in Pakistan
+          </p>
+        </div>
       </div>
     </footer>
 
