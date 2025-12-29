@@ -338,7 +338,20 @@
         const category = document.getElementById("categoryFilter").value;
         try {
           const res = await fetch(`${API_BASE}/api/products`);
-          products = await res.json();
+          const data = await res.json();
+
+          // Handle different API response formats
+          if (Array.isArray(data)) {
+            products = data;
+          } else if (data.products && Array.isArray(data.products)) {
+            products = data.products;
+          } else if (data.data && Array.isArray(data.data)) {
+            products = data.data;
+          } else {
+            console.error("Invalid API response format:", data);
+            products = [];
+          }
+
           let filtered = products.filter(
             (p) =>
               p.name.toLowerCase().includes(search) &&
@@ -347,6 +360,7 @@
           displayProducts(filtered);
         } catch (error) {
           console.error("Load error:", error);
+          displayProducts([]);
         }
       }
 
