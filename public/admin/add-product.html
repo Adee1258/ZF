@@ -816,7 +816,7 @@
                 .map(
                   (img, index) => `
                 <div class="relative group">
-                  <img src="${API_BASE}${img}" class="w-full h-24 object-cover rounded-lg shadow-md" alt="Existing ${index}">
+                  <img src="${String(img).startsWith('http') ? img : (API_BASE + img)}" class="w-full h-24 object-cover rounded-lg shadow-md" alt="Existing ${index}">
                   <div class="absolute bottom-1 left-1 bg-black bg-opacity-50 text-white text-xs rounded px-1">Existing ${
                     index + 1
                   }</div>

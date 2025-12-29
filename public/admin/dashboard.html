@@ -704,7 +704,8 @@
               product.images.length > 0 &&
               product.images[0]
             ) {
-              const imgSrc = `${API_BASE}${product.images[0]}`;
+              const raw = String(product.images[0]);
+              const imgSrc = raw.startsWith("http") ? raw : `${API_BASE}${raw}`;
               productImageHtml = `<img src="${imgSrc}" class="w-12 h-12 object-cover rounded mr-2" alt="${order.productName}" style="border: 1px solid #ddd;" />`;
             }
 

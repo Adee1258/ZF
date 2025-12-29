@@ -437,7 +437,10 @@
       function loadCarousel() {
         const images =
           currentProduct.images && currentProduct.images.length > 0
-            ? currentProduct.images.map((img) => `${API_BASE}${img}`)
+            ? currentProduct.images.map((img) => {
+                const s = String(img);
+                return s.startsWith("http") ? s : `${API_BASE}${s}`;
+              })
             : ["https://via.placeholder.com/600?text=No+Image"];
         const carousel = document.getElementById("carousel");
         const thumbs = document.getElementById("thumbsContainer");
