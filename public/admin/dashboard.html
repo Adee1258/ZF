@@ -534,23 +534,14 @@
           </div>
           <div id="billContent" class="mb-4"></div>
           <div class="flex justify-end space-x-2 pt-4 border-t">
-            <button
-              onclick="printBill()"
-              class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Print
-            </button>
-            <button
-              onclick="downloadBill()"
-              class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-            >
-              PDF
-            </button>
+            <button onclick="printBill()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Print</button>
+            <button onclick="downloadBill()" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">PDF</button>
           </div>
         </div>
       </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
       const API_BASE = location.hostname.includes("zdspices.pk")
         ? "https://api.zdspices.pk"
@@ -686,6 +677,9 @@
         <td class="px-6 py-4 text-sm text-gray-500">${new Date(
           m.createdAt
         ).toLocaleString()}</td>
+        <td class="px-6 py-4 text-sm">
+          <button onclick="deleteMessage('${m._id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-semibold">Delete</button>
+        </td>
       </tr>
     `
           )
@@ -886,6 +880,23 @@
       function closeBillModal() {
         document.getElementById("billModal").classList.add("hidden");
       }
+      function printBill() {
+        window.print();
+      }
+      function downloadBill() {
+        try {
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF();
+          const content = document.getElementById("billContent");
+          doc.html(content, {
+            callback: (doc) => doc.save("invoice.pdf"),
+            x: 10,
+            y: 10,
+          });
+        } catch (e) {
+          alert("PDF module not available");
+        }
+      }
 
       // Update Order Status - Approve or Reject
       async function updateStatus(orderId, newStatus, event) {
@@ -938,6 +949,23 @@
         } finally {
           button.disabled = false;
           button.textContent = newStatus === "Shipped" ? "Approve" : "Reject";
+        }
+      }
+
+      async function deleteMessage(id) {
+        if (!confirm("Message delete karna hai?")) return;
+        try {
+          const res = await fetch(`${API_BASE}/api/admin/contact/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.msg || "Delete failed");
+          showToast("Message deleted");
+          await loadContactMessages();
+        } catch (err) {
+          console.error("Delete message error:", err);
+          showToast("Delete error", "error");
         }
       }
 
