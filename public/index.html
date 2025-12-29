@@ -20,10 +20,8 @@
         theme: { extend: { fontFamily: { sans: ["Poppins", "sans-serif"] } } },
       };
 
-      // API Configuration
-      const API_BASE = location.hostname.includes("zdspices.pk")
-        ? "https://api.zdspices.pk"
-        : `http://${location.hostname}:5000`;
+      // API Configuration - FIXED
+      const API_BASE = "https://api.zdspices.pk";
     </script>
     <style>
       .hero-bg {
@@ -41,29 +39,6 @@
       .stock-bar {
         background: linear-gradient(to right, #10b981, #059669);
       }
-      .toast {
-        animation: slideIn 0.3s ease;
-      }
-      @keyframes slideIn {
-        from {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-      @keyframes fade-in {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
       .line-clamp-1 {
         display: -webkit-box;
         -webkit-line-clamp: 1;
@@ -78,7 +53,6 @@
         overflow: hidden;
         line-clamp: 2;
       }
-      /* Secret Admin Access Animation */
       @keyframes secretPulse {
         0%,
         100% {
@@ -96,13 +70,12 @@
   <body
     class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-all duration-300"
   >
-    <!-- Super Enhanced NAVBAR -->
+    <!-- NAVBAR -->
     <nav
       class="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-lg z-50 transition-all duration-300"
     >
       <div class="mx-auto px-0">
         <div class="flex justify-between items-center py-4">
-          <!-- Left Side - Logo with SECRET ADMIN ACCESS (5 clicks) -->
           <div class="flex items-center space-x-6 pl-4 md:pl-8">
             <img
               id="secretAdminLogo"
@@ -119,7 +92,6 @@
             </h1>
           </div>
 
-          <!-- Right Side (Desktop) -->
           <div class="hidden md:flex items-center space-x-8 pr-4 md:pr-8">
             <a
               href="#home"
@@ -147,7 +119,6 @@
             </a>
           </div>
 
-          <!-- Mobile Buttons -->
           <div class="md:hidden flex items-center space-x-4 pr-4">
             <button onclick="toggleMobileMenu()" class="p-3">
               <i class="fas fa-bars text-2xl text-gray-700"></i>
@@ -155,7 +126,6 @@
           </div>
         </div>
 
-        <!-- Mobile Menu -->
         <div
           id="mobileMenu"
           class="hidden md:hidden absolute top-full left-0 w-full bg-white/98 backdrop-blur-lg shadow-2xl"
@@ -333,27 +303,18 @@
       let secretClickCount = 0;
       let secretClickTimer = null;
 
-      // SECRET ADMIN ACCESS - 5 clicks on logo within 3 seconds
+      // SECRET ADMIN ACCESS
       function handleSecretAdminAccess() {
         secretClickCount++;
         const logo = document.getElementById("secretAdminLogo");
         logo.classList.add("secret-active");
         setTimeout(() => logo.classList.remove("secret-active"), 300);
 
-        // Reset counter after 3 seconds
         if (secretClickTimer) clearTimeout(secretClickTimer);
         secretClickTimer = setTimeout(() => {
           secretClickCount = 0;
         }, 3000);
 
-        // Show click count indicator (subtle)
-        if (secretClickCount === 1) {
-          console.log(
-            "🔐 Secret admin access detected... " + secretClickCount + "/5"
-          );
-        }
-
-        // After 5 clicks - UNLOCK ADMIN
         if (secretClickCount === 5) {
           confetti({
             particleCount: 150,
@@ -374,24 +335,22 @@
         }
       }
 
-      // Mobile Menu Toggle
       function toggleMobileMenu() {
         const menu = document.getElementById("mobileMenu");
         menu.classList.toggle("hidden");
       }
 
-      // Go to Details
       function goToDetails(id) {
         window.location.href = `/product-details.html?id=${id}`;
       }
 
-      // Load Products with Better Error Handling
+      // Load Products - FIXED IMAGE HANDLING
       async function loadProducts() {
         const search = document.getElementById("search").value.toLowerCase();
         const category = document.getElementById("categoryFilter").value;
 
         try {
-          console.log("🔄 Loading products from:", `${API_BASE}/api/products`);
+          console.log("📡 Loading products from:", `${API_BASE}/api/products`);
           const res = await fetch(`${API_BASE}/api/products`);
 
           if (!res.ok) {
@@ -401,7 +360,6 @@
           const data = await res.json();
           console.log("✅ Products loaded:", data);
 
-          // Handle different API response formats
           if (Array.isArray(data)) {
             products = data;
           } else if (data.products && Array.isArray(data.products)) {
@@ -424,7 +382,6 @@
           console.error("❌ Load error:", error);
           displayProducts([]);
 
-          // Show user-friendly error
           const grid = document.getElementById("productsGrid");
           grid.innerHTML = `
             <div class="col-span-full text-center py-12">
@@ -449,20 +406,37 @@
           .map((p) => {
             const discountedPrice =
               p.price - (p.price * (p.discount || 0)) / 100;
-            const firstImgRaw =
-              p.images && p.images.length > 0 ? p.images[0] : null;
-            const firstImg = firstImgRaw
-              ? String(firstImgRaw).startsWith("http")
-                ? firstImgRaw
-                : `${API_BASE}${firstImgRaw}`
-              : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect width='300' height='200' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
+
+            // FIXED: Image handling - check if it's base64 or URL
+            let firstImg;
+            if (p.images && p.images.length > 0) {
+              const img = p.images[0];
+              // If image starts with 'data:image', it's base64 - use directly
+              if (img.startsWith("data:image")) {
+                firstImg = img;
+              }
+              // If it starts with http, use directly
+              else if (img.startsWith("http")) {
+                firstImg = img;
+              }
+              // Otherwise, it's a path - construct full URL
+              else {
+                firstImg = `${API_BASE}${img}`;
+              }
+            } else {
+              // Fallback placeholder
+              firstImg =
+                "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect width='300' height='200' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
+            }
+
             const stockPercent =
               p.stock > 0 ? Math.min((p.stock / 100) * 100, 100) : 0;
+
             return `
               <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg cursor-pointer border border-gray-200 dark:border-gray-700 hover:border-blue-300 transition-colors" onclick="goToDetails('${
                 p._id
               }')">
-                <div class="relative h-56 overflow-hidden">
+                <div class="relative h-56 overflow-hidden bg-gray-100">
                   <img src="${firstImg}" alt="${
               p.name
             }" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22200%22%3E%3Crect width=%22300%22 height=%22200%22 fill=%22%23e5e7eb%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2218%22 fill=%22%239ca3af%22%3ENo Image%3C/text%3E%3C/svg%3E';">
@@ -521,7 +495,6 @@
           .scrollIntoView({ behavior: "smooth" });
       }
 
-      // Init - Load products on page load
       console.log("🚀 Page loaded, fetching products...");
       loadProducts();
     </script>
