@@ -381,9 +381,7 @@
       let currentSlide = 0;
       let qty = 1;
 
-      function toggleMobileMenu() {
-        document.getElementById("mobileMenu").classList.toggle("hidden");
-      }
+      
 
       async function loadProduct() {
         const id = new URLSearchParams(window.location.search).get("id");
@@ -636,5 +634,6 @@
 
       loadProduct();
     </script>
-  </body>
+  <script src="js/navbar.js"></script>
+</body>
 </html>
