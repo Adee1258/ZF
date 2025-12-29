@@ -78,6 +78,19 @@
         overflow: hidden;
         line-clamp: 2;
       }
+      /* Secret Admin Access Animation */
+      @keyframes secretPulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+      .secret-active {
+        animation: secretPulse 0.3s ease-in-out;
+      }
     </style>
   </head>
   <body
@@ -89,12 +102,14 @@
     >
       <div class="mx-auto px-0">
         <div class="flex justify-between items-center py-4">
-          <!-- Left Side -->
+          <!-- Left Side - Logo with SECRET ADMIN ACCESS (5 clicks) -->
           <div class="flex items-center space-x-6 pl-4 md:pl-8">
             <img
+              id="secretAdminLogo"
               src="/images/logo.jpeg"
               alt="ZIKRIYA DARBAR FOOD PRODUCTS Logo"
-              class="h-24 w-24 object-contain rounded-full shadow-2xl border-4 border-orange-500 ring-4 ring-orange-200"
+              class="h-24 w-24 object-contain rounded-full shadow-2xl border-4 border-orange-500 ring-4 ring-orange-200 cursor-pointer"
+              onclick="handleSecretAdminAccess()"
               onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%23f97316%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 fill=%22white%22%3EZD%3C/text%3E%3C/svg%3E';"
             />
             <h1
@@ -124,14 +139,12 @@
             >
               About Us
             </a>
-            <!-- Changed: Now opens full contact page -->
             <a
               href="contact.html"
               class="text-gray-700 hover:text-orange-600 font-medium transition duration-300 text-lg"
             >
               Contact Us
             </a>
-            <!-- Admin button removed from desktop navbar -->
           </div>
 
           <!-- Mobile Buttons -->
@@ -166,14 +179,12 @@
               onclick="toggleMobileMenu()"
               >About Us</a
             >
-            <!-- Changed: Now opens full contact page -->
             <a
               href="/contact.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               onclick="toggleMobileMenu()"
               >Contact Us</a
             >
-            <!-- Admin button removed from mobile menu -->
           </div>
         </div>
       </div>
@@ -212,7 +223,7 @@
           Our Fresh Products
         </h2>
         <div
-          class="flex flex-col md:flex-row justify-between items-center mb-8"
+          class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4"
         >
           <input
             id="search"
@@ -223,7 +234,7 @@
           />
           <select
             id="categoryFilter"
-            class="md:ml-4 p-4 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition shadow-sm"
+            class="p-4 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition shadow-sm"
             onchange="loadProducts()"
           >
             <option value="">All Categories</option>
@@ -269,7 +280,6 @@
                   >Contact</a
                 >
               </li>
-              <!-- Removed admin link from footer -->
             </ul>
           </div>
           <div>
@@ -320,6 +330,49 @@
 
     <script>
       let products = [];
+      let secretClickCount = 0;
+      let secretClickTimer = null;
+
+      // SECRET ADMIN ACCESS - 5 clicks on logo within 3 seconds
+      function handleSecretAdminAccess() {
+        secretClickCount++;
+        const logo = document.getElementById("secretAdminLogo");
+        logo.classList.add("secret-active");
+        setTimeout(() => logo.classList.remove("secret-active"), 300);
+
+        // Reset counter after 3 seconds
+        if (secretClickTimer) clearTimeout(secretClickTimer);
+        secretClickTimer = setTimeout(() => {
+          secretClickCount = 0;
+        }, 3000);
+
+        // Show click count indicator (subtle)
+        if (secretClickCount === 1) {
+          console.log(
+            "🔐 Secret admin access detected... " + secretClickCount + "/5"
+          );
+        }
+
+        // After 5 clicks - UNLOCK ADMIN
+        if (secretClickCount === 5) {
+          confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+          });
+
+          setTimeout(() => {
+            const hasToken = localStorage.getItem("adminToken");
+            if (hasToken) {
+              window.location.href = "/admin/dashboard.html";
+            } else {
+              window.location.href = "/admin/login.html";
+            }
+          }, 500);
+
+          secretClickCount = 0;
+        }
+      }
 
       // Mobile Menu Toggle
       function toggleMobileMenu() {
@@ -332,13 +385,21 @@
         window.location.href = `/product-details.html?id=${id}`;
       }
 
-      // Load Products
+      // Load Products with Better Error Handling
       async function loadProducts() {
         const search = document.getElementById("search").value.toLowerCase();
         const category = document.getElementById("categoryFilter").value;
+
         try {
+          console.log("🔄 Loading products from:", `${API_BASE}/api/products`);
           const res = await fetch(`${API_BASE}/api/products`);
+
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+
           const data = await res.json();
+          console.log("✅ Products loaded:", data);
 
           // Handle different API response formats
           if (Array.isArray(data)) {
@@ -357,20 +418,33 @@
               p.name.toLowerCase().includes(search) &&
               (!category || p.category === category)
           );
+
           displayProducts(filtered);
         } catch (error) {
-          console.error("Load error:", error);
+          console.error("❌ Load error:", error);
           displayProducts([]);
+
+          // Show user-friendly error
+          const grid = document.getElementById("productsGrid");
+          grid.innerHTML = `
+            <div class="col-span-full text-center py-12">
+              <i class="fas fa-exclamation-triangle text-5xl text-red-500 mb-4"></i>
+              <p class="text-xl text-gray-700 dark:text-gray-300 mb-2">Unable to load products</p>
+              <p class="text-gray-500 dark:text-gray-400">Please check your connection or try again later</p>
+            </div>
+          `;
         }
       }
 
       function displayProducts(prods) {
         const grid = document.getElementById("productsGrid");
+
         if (prods.length === 0) {
           grid.innerHTML =
-            '<p class="col-span-full text-center text-gray-500 dark:text-gray-400 py-12">No products found. Add from admin!</p>';
+            '<p class="col-span-full text-center text-gray-500 dark:text-gray-400 py-12 text-xl">No products found. Check back soon!</p>';
           return;
         }
+
         grid.innerHTML = prods
           .map((p) => {
             const discountedPrice =
@@ -447,7 +521,8 @@
           .scrollIntoView({ behavior: "smooth" });
       }
 
-      // Init
+      // Init - Load products on page load
+      console.log("🚀 Page loaded, fetching products...");
       loadProducts();
     </script>
     <script src="js/navbar.js"></script>
