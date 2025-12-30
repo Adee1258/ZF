@@ -19,8 +19,6 @@
         darkMode: "class",
         theme: { extend: { fontFamily: { sans: ["Poppins", "sans-serif"] } } },
       };
-
-      const API_BASE = "https://api.zdspices.pk";
     </script>
     <style>
       .hero-bg {
@@ -106,20 +104,6 @@
 
       #mobileMenu:not(.hidden) {
         max-height: 500px;
-      }
-
-      .loading-pulse {
-        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-      }
-
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.5;
-        }
       }
     </style>
   </head>
@@ -233,7 +217,7 @@
           >
         </h1>
         <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
-          Fresh, authentic spices and seafood for your shop – delivered fast
+          Fresh, authentic spices and seafood for your shop - delivered fast
           across Pakistan. B2B only, wholesale prices!
         </p>
         <button
@@ -276,9 +260,18 @@
           </select>
         </div>
 
+        <div id="loading" class="text-center py-12">
+          <i
+            class="fas fa-spinner text-4xl text-orange-500 animate-spin mb-4"
+          ></i>
+          <p class="text-gray-600 dark:text-gray-400 text-lg">
+            Loading products...
+          </p>
+        </div>
+
         <div
           id="productsGrid"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 hidden"
         >
           <!-- Products will load here -->
         </div>
@@ -294,7 +287,7 @@
               <span class="text-orange-400">ZIKRIYA DARBAR</span> FOOD PRODUCTS
             </h3>
             <p class="text-gray-400">
-              Premium spices & fish for B2B. Fresh, authentic, delivered fast.
+              Premium spices and fish for B2B. Fresh, authentic, delivered fast.
             </p>
           </div>
           <div>
@@ -358,31 +351,31 @@
         >
           <p>
             © 2025 ZIKRIYA DARBAR FOOD PRODUCTS. All rights reserved. | Made
-            with ❤️ in Pakistan
+            with love in Pakistan
           </p>
         </div>
       </div>
     </footer>
 
     <script>
+      const API_BASE = "https://api.zdspices.pk";
       let products = [];
       let secretClickCount = 0;
       let secretClickTimer = null;
 
-      // FALLBACK DATA - اگر API کام نہ کرے تو یہ استعمال ہوگا
       const fallbackProducts = [
         {
           _id: "1",
           name: "Red Chilli Mirch - Premium",
           description:
-            "High-quality red chillies sourced directly from farmers. Perfect for spice blends and seasoning.",
+            "High-quality red chillies sourced directly from farmers. Perfect for spice blends.",
           price: 450,
           discount: 10,
           category: "Mirch",
           stock: 85,
           sku: "MIRCH-001",
           images: [
-            "https://images.unsplash.com/photo-1599599810694-b5ac1ea33e2b?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1599599810694-b5ac1ea33e2b?w=400",
           ],
         },
         {
@@ -396,21 +389,21 @@
           stock: 120,
           sku: "DHANIYA-001",
           images: [
-            "https://images.unsplash.com/photo-1596040706957-701c23b80313?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1596040706957-701c23b80313?w=400",
           ],
         },
         {
           _id: "3",
           name: "Turmeric Haldi - Pure",
           description:
-            "100% pure turmeric powder with golden color. Premium quality guaranteed.",
+            "100% pure turmeric powder with golden color. Premium quality.",
           price: 280,
           discount: 8,
           category: "Haldi",
           stock: 95,
           sku: "HALDI-001",
           images: [
-            "https://images.unsplash.com/photo-1596040706957-701c23b80313?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1596040706957-701c23b80313?w=400",
           ],
         },
         {
@@ -424,7 +417,7 @@
           stock: 45,
           sku: "FISH-001",
           images: [
-            "https://images.unsplash.com/photo-1599599810694-b5ac1ea33e2b?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1599599810694-b5ac1ea33e2b?w=400",
           ],
         },
         {
@@ -438,7 +431,7 @@
           stock: 110,
           sku: "JEERA-001",
           images: [
-            "https://images.unsplash.com/photo-1596040706957-701c23b80313?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1596040706957-701c23b80313?w=400",
           ],
         },
         {
@@ -452,7 +445,7 @@
           stock: 75,
           sku: "PEPPER-001",
           images: [
-            "https://images.unsplash.com/photo-1599599810694-b5ac1ea33e2b?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1599599810694-b5ac1ea33e2b?w=400",
           ],
         },
         {
@@ -466,26 +459,24 @@
           stock: 60,
           sku: "METHI-001",
           images: [
-            "https://images.unsplash.com/photo-1596040706957-701c23b80313?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1596040706957-701c23b80313?w=400",
           ],
         },
         {
           _id: "8",
           name: "Dried Fish - Shrimp",
-          description:
-            "Premium dried shrimp for seasoning and cooking. Fresh and authentic.",
+          description: "Premium dried shrimp for seasoning and cooking.",
           price: 680,
           discount: 10,
           category: "Seafood",
           stock: 35,
           sku: "SHRIMP-001",
           images: [
-            "https://images.unsplash.com/photo-1599599810694-b5ac1ea33e2b?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1599599810694-b5ac1ea33e2b?w=400",
           ],
         },
       ];
 
-      // SECRET ADMIN ACCESS
       function handleSecretAdminAccess() {
         secretClickCount++;
         const logo = document.getElementById("secretAdminLogo");
@@ -505,16 +496,13 @@
           });
 
           setTimeout(() => {
-            alert(
-              "🔐 Admin Access:\n\nPlease contact owner for admin credentials."
-            );
+            window.location.href = "/admin/login.html";
           }, 500);
 
           secretClickCount = 0;
         }
       }
 
-      // Mobile Menu Functions
       function toggleMobileMenu() {
         const menu = document.getElementById("mobileMenu");
         const btn = document.getElementById("mobileMenuBtn");
@@ -534,7 +522,6 @@
         btn.innerHTML = '<i class="fas fa-bars text-2xl text-gray-700"></i>';
       }
 
-      // Close menu when clicking outside
       document.addEventListener("click", function (e) {
         const menu = document.getElementById("mobileMenu");
         const btn = document.getElementById("mobileMenuBtn");
@@ -550,17 +537,13 @@
         window.location.href = `/product-details.html?id=${id}`;
       }
 
-      // Get Image URL
       function getImageUrl(img) {
         if (!img) return getPlaceholderImage();
-
         const imgStr = String(img).trim();
-
         if (imgStr.startsWith("data:image")) return imgStr;
         if (imgStr.startsWith("http")) return imgStr;
         if (imgStr)
           return `${API_BASE}${imgStr.startsWith("/") ? imgStr : "/" + imgStr}`;
-
         return getPlaceholderImage();
       }
 
@@ -568,33 +551,26 @@
         return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect width='300' height='200' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
       }
 
-      // Load Products - API یا FALLBACK
       async function loadProducts() {
         const search = document.getElementById("search").value.toLowerCase();
         const category = document.getElementById("categoryFilter").value;
+        const grid = document.getElementById("productsGrid");
+        const loading = document.getElementById("loading");
 
         try {
-          console.log("📡 Loading products...");
-          const res = await fetch(`${API_BASE}/api/products`, {
-            timeout: 5000,
-          });
+          console.log("Loading products from API...");
+          const response = await fetch(`${API_BASE}/api/products`);
 
-          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          if (!response.ok) throw new Error("API Error");
 
-          const data = await res.json();
-          console.log("✅ Products loaded from API:", data);
+          const data = await response.json();
+          console.log("API Products:", data);
 
-          if (Array.isArray(data)) {
-            products = data;
-          } else if (data.products && Array.isArray(data.products)) {
-            products = data.products;
-          } else if (data.data && Array.isArray(data.data)) {
-            products = data.data;
-          } else {
-            throw new Error("Invalid format");
-          }
+          products = Array.isArray(data)
+            ? data
+            : data.products || fallbackProducts;
         } catch (error) {
-          console.warn("⚠️ API failed, using fallback data:", error.message);
+          console.warn("Using fallback products:", error.message);
           products = fallbackProducts;
         }
 
@@ -604,19 +580,16 @@
             (!category || p.category === category)
         );
 
-        displayProducts(filtered);
-      }
+        loading.classList.add("hidden");
+        grid.classList.remove("hidden");
 
-      function displayProducts(prods) {
-        const grid = document.getElementById("productsGrid");
-
-        if (prods.length === 0) {
+        if (filtered.length === 0) {
           grid.innerHTML =
-            '<p class="col-span-full text-center text-gray-500 dark:text-gray-400 py-12 text-xl">کوئی منتج نہیں ملا۔ کچھ دیر بعد دوبارہ کوشش کریں!</p>';
+            '<p class="col-span-full text-center text-gray-500 dark:text-gray-400 py-12 text-xl">No products found</p>';
           return;
         }
 
-        grid.innerHTML = prods
+        grid.innerHTML = filtered
           .map((p) => {
             const discountedPrice =
               p.price - (p.price * (p.discount || 0)) / 100;
@@ -633,7 +606,7 @@
               }')">
                 ${
                   p.discount > 0
-                    ? `<div class="absolute top-4 right-4 bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg z-10">-${p.discount}% OFF</div>`
+                    ? `<div class="absolute top-4 right-4 bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg z-10">-${p.discount}%</div>`
                     : ""
                 }
                 
@@ -646,8 +619,7 @@
                 <div class="p-6">
                   <h3 class="font-bold text-xl mb-3 line-clamp-1">${p.name}</h3>
                   <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">${
-                    p.description ||
-                    "Premium quality product sourced directly from farms."
+                    p.description || "Premium quality product"
                   }</p>
                   
                   <div class="flex justify-between items-center mb-4">
@@ -661,15 +633,11 @@
                     }
                   </div>
                   
-                  <div class="mb-4">
-                    <div class="flex items-center mb-2">
-                      <div class="flex text-yellow-400">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
-                      </div>
-                      <span class="ml-2 text-sm text-gray-500">4.8 (${
-                        Math.floor(Math.random() * 20) + 8
-                      } reviews)</span>
+                  <div class="flex items-center mb-4">
+                    <div class="flex text-yellow-400">
+                      <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
                     </div>
+                    <span class="ml-2 text-sm text-gray-500">4.8</span>
                   </div>
                   
                   <div class="mb-4">
@@ -679,12 +647,8 @@
                     </div>
                     <p class="text-xs text-gray-500 mt-1">${
                       p.stock || 0
-                    } units left</p>
+                    } units</p>
                   </div>
-                  
-                  <p class="text-xs text-gray-500">${
-                    p.category
-                  } | <span class="font-mono">SKU: ${p.sku || "N/A"}</span></p>
                 </div>
               </div>
             `;
@@ -698,7 +662,6 @@
           .scrollIntoView({ behavior: "smooth" });
       }
 
-      // Load products on page load
       loadProducts();
     </script>
   </body>
