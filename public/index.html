@@ -65,6 +65,17 @@
       .secret-active {
         animation: secretPulse 0.3s ease-in-out;
       }
+
+      /* Mobile menu smooth transitions */
+      #mobileMenu {
+        transition: all 0.3s ease;
+        max-height: 0;
+        overflow: hidden;
+      }
+
+      #mobileMenu:not(.hidden) {
+        max-height: 500px;
+      }
     </style>
   </head>
   <body
@@ -120,12 +131,13 @@
           </div>
 
           <div class="md:hidden flex items-center space-x-4 pr-4">
-            <button onclick="toggleMobileMenu()" class="p-3">
+            <button onclick="toggleMobileMenu()" class="p-3" id="mobileMenuBtn">
               <i class="fas fa-bars text-2xl text-gray-700"></i>
             </button>
           </div>
         </div>
 
+        <!-- Mobile Menu -->
         <div
           id="mobileMenu"
           class="hidden md:hidden absolute top-full left-0 w-full bg-white/98 backdrop-blur-lg shadow-2xl"
@@ -134,25 +146,25 @@
             <a
               href="#home"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="toggleMobileMenu()"
+              onclick="closeMobileMenu()"
               >Home</a
             >
             <a
               href="#products"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="toggleMobileMenu()"
+              onclick="closeMobileMenu()"
               >Products</a
             >
             <a
               href="/About.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="toggleMobileMenu()"
+              onclick="closeMobileMenu()"
               >About Us</a
             >
             <a
               href="/contact.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="toggleMobileMenu()"
+              onclick="closeMobileMenu()"
               >Contact Us</a
             >
           </div>
@@ -198,24 +210,28 @@
           <input
             id="search"
             type="text"
-            placeholder="Search masalay, haldi, machhli..."
-            class="flex-1 md:w-1/3 p-4 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition shadow-sm"
+            placeholder="Search products..."
+            class="flex-1 p-3 border-2 border-gray-300 rounded-lg focus:border-orange-600 dark:bg-gray-700 dark:text-white dark:border-gray-600"
             oninput="loadProducts()"
           />
           <select
             id="categoryFilter"
-            class="p-4 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition shadow-sm"
+            class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-600 dark:bg-gray-700 dark:text-white dark:border-gray-600"
             onchange="loadProducts()"
           >
             <option value="">All Categories</option>
-            <option value="Masalay">Masalay</option>
-            <option value="Machhli">Machhli</option>
+            <option value="Spices">Spices</option>
+            <option value="Seafood">Seafood</option>
+            <option value="Other">Other</option>
           </select>
         </div>
+
         <div
           id="productsGrid"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-        ></div>
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
+          <!-- Products will load here -->
+        </div>
       </div>
     </section>
 
@@ -224,8 +240,8 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-4 gap-8">
           <div>
-            <h3 class="text-lg font-bold mb-4 flex items-center">
-              ZIKRIYA DARBAR FOOD PRODUCTS
+            <h3 class="text-lg font-bold mb-4">
+              <span class="text-orange-400">ZIKRIYA DARBAR</span> FOOD PRODUCTS
             </h3>
             <p class="text-gray-400">
               Premium spices & fish for B2B. Fresh, authentic, delivered fast.
@@ -236,12 +252,12 @@
             <ul class="space-y-2 text-gray-400">
               <li><a href="/" class="hover:text-white transition">Home</a></li>
               <li>
-                <a href="#products" class="hover:text-white transition"
+                <a href="/#products" class="hover:text-white transition"
                   >Products</a
                 >
               </li>
               <li>
-                <a href="/about.html" class="hover:text-white transition"
+                <a href="/About.html" class="hover:text-white transition"
                   >About Us</a
                 >
               </li>
@@ -335,10 +351,37 @@
         }
       }
 
+      // Mobile Menu Functions - FIXED
       function toggleMobileMenu() {
         const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
         menu.classList.toggle("hidden");
+
+        if (menu.classList.contains("hidden")) {
+          btn.innerHTML = '<i class="fas fa-bars text-2xl text-gray-700"></i>';
+        } else {
+          btn.innerHTML = '<i class="fas fa-times text-2xl text-gray-700"></i>';
+        }
       }
+
+      function closeMobileMenu() {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+        menu.classList.add("hidden");
+        btn.innerHTML = '<i class="fas fa-bars text-2xl text-gray-700"></i>';
+      }
+
+      // Close menu when clicking outside
+      document.addEventListener("click", function (e) {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+
+        if (!menu.contains(e.target) && !btn.contains(e.target)) {
+          if (!menu.classList.contains("hidden")) {
+            closeMobileMenu();
+          }
+        }
+      });
 
       function goToDetails(id) {
         window.location.href = `/product-details.html?id=${id}`;
@@ -393,6 +436,31 @@
         }
       }
 
+      function getImageUrl(img) {
+        if (!img) return getPlaceholderImage();
+
+        // If image is base64 data URL
+        if (typeof img === "string" && img.startsWith("data:image")) {
+          return img;
+        }
+
+        // If image is HTTP URL
+        if (typeof img === "string" && img.startsWith("http")) {
+          return img;
+        }
+
+        // If image is a path, construct full URL
+        if (typeof img === "string") {
+          return `${API_BASE}${img.startsWith("/") ? img : "/" + img}`;
+        }
+
+        return getPlaceholderImage();
+      }
+
+      function getPlaceholderImage() {
+        return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect width='300' height='200' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
+      }
+
       function displayProducts(prods) {
         const grid = document.getElementById("productsGrid");
 
@@ -407,27 +475,11 @@
             const discountedPrice =
               p.price - (p.price * (p.discount || 0)) / 100;
 
-            // FIXED: Image handling - check if it's base64 or URL
-            let firstImg;
-            if (p.images && p.images.length > 0) {
-              const img = p.images[0];
-              // If image starts with 'data:image', it's base64 - use directly
-              if (img.startsWith("data:image")) {
-                firstImg = img;
-              }
-              // If it starts with http, use directly
-              else if (img.startsWith("http")) {
-                firstImg = img;
-              }
-              // Otherwise, it's a path - construct full URL
-              else {
-                firstImg = `${API_BASE}${img}`;
-              }
-            } else {
-              // Fallback placeholder
-              firstImg =
-                "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect width='300' height='200' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
-            }
+            // Get first image with proper handling
+            const firstImg =
+              p.images && p.images.length > 0
+                ? getImageUrl(p.images[0])
+                : getPlaceholderImage();
 
             const stockPercent =
               p.stock > 0 ? Math.min((p.stock / 100) * 100, 100) : 0;
@@ -439,7 +491,7 @@
                 <div class="relative h-56 overflow-hidden bg-gray-100">
                   <img src="${firstImg}" alt="${
               p.name
-            }" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22200%22%3E%3Crect width=%22300%22 height=%22200%22 fill=%22%23e5e7eb%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2218%22 fill=%22%239ca3af%22%3ENo Image%3C/text%3E%3C/svg%3E';">
+            }" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" onerror="this.src='${getPlaceholderImage()}'">
                   ${
                     p.discount > 0
                       ? `<div class="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg transform rotate-[-5deg]">-${p.discount}% OFF</div>`
@@ -495,9 +547,8 @@
           .scrollIntoView({ behavior: "smooth" });
       }
 
-      console.log("🚀 Page loaded, fetching products...");
+      // Load products on page load
       loadProducts();
     </script>
-    <script src="js/navbar.js"></script>
   </body>
 </html>

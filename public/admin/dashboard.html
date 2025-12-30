@@ -534,8 +534,18 @@
           </div>
           <div id="billContent" class="mb-4"></div>
           <div class="flex justify-end space-x-2 pt-4 border-t">
-            <button onclick="printBill()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Print</button>
-            <button onclick="downloadBill()" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">PDF</button>
+            <button
+              onclick="printBill()"
+              class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Print
+            </button>
+            <button
+              onclick="downloadBill()"
+              class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+            >
+              PDF
+            </button>
           </div>
         </div>
       </div>
@@ -678,7 +688,9 @@
           m.createdAt
         ).toLocaleString()}</td>
         <td class="px-6 py-4 text-sm">
-          <button onclick="deleteMessage('${m._id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-semibold">Delete</button>
+          <button onclick="deleteMessage('${
+            m._id
+          }')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-semibold">Delete</button>
         </td>
       </tr>
     `
@@ -704,9 +716,8 @@
               product.images.length > 0 &&
               product.images[0]
             ) {
-              const raw = String(product.images[0]);
-              const imgSrc = raw.startsWith("http") ? raw : `${API_BASE}${raw}`;
-              productImageHtml = `<img src="${imgSrc}" class="w-12 h-12 object-cover rounded mr-2" alt="${order.productName}" style="border: 1px solid #ddd;" />`;
+              const imgSrc = getProductImageUrl(product.images[0]);
+              productImageHtml = `<img src="${imgSrc}" class="w-12 h-12 object-cover rounded mr-2" alt="${order.productName}" style="border: 1px solid #ddd;" onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\\'w-12 h-12 bg-gray-300 rounded mr-2 flex items-center justify-center text-xs text-gray-600 font-medium\\'>No Img</div>'" />`;
             }
 
             return `
@@ -756,6 +767,26 @@
         document.getElementById("lowStock").textContent = lowStockCount;
       }
 
+      // Get Proper Image URL - Handle base64 and paths
+      function getProductImageUrl(img) {
+        if (!img) return "";
+
+        const imgStr = String(img);
+
+        // If already base64 data URL, use directly
+        if (imgStr.startsWith("data:image")) {
+          return imgStr;
+        }
+
+        // If already HTTP URL, use directly
+        if (imgStr.startsWith("http")) {
+          return imgStr;
+        }
+
+        // Otherwise construct API URL
+        return `${API_BASE}${imgStr.startsWith("/") ? imgStr : "/" + imgStr}`;
+      }
+
       // Display Products - Clean & Safe Image Handling
       function displayProducts(prods) {
         const tbody = document.getElementById("productsTable");
@@ -765,15 +796,18 @@
         }
 
         tbody.innerHTML = prods
-          .map(
-            (p) => `
+          .map((p) => {
+            let imageHtml = `<div class="w-12 h-12 bg-gray-300 rounded flex items-center justify-center text-gray-600 text-xs font-medium">No Img</div>`;
+
+            if (p.images && p.images.length > 0 && p.images[0]) {
+              const imgUrl = getProductImageUrl(p.images[0]);
+              imageHtml = `<img src="${imgUrl}" class="w-12 h-12 object-cover rounded" alt="${p.name}" onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\\'w-12 h-12 bg-gray-300 rounded flex items-center justify-center text-gray-600 text-xs font-medium\\'>No Img</div>'" style="border: 1px solid #ddd;">`;
+            }
+
+            return `
       <tr>
         <td class="px-4 py-3">
-          ${
-            p.images && p.images.length > 0 && p.images[0]
-              ? `<img src="${API_BASE}${p.images[0]}" class="w-12 h-12 object-cover rounded" alt="${p.name}" onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\\'w-12 h-12 bg-gray-300 rounded flex items-center justify-center text-gray-600 text-xs font-medium\\'>No Img</div>'">`
-              : `<div class="w-12 h-12 bg-gray-300 rounded flex items-center justify-center text-gray-600 text-xs font-medium">No Img</div>`
-          }
+          ${imageHtml}
         </td>
         <td class="px-4 py-3">${p.name}</td>
         <td class="px-4 py-3">Rs ${p.price}</td>
@@ -790,8 +824,8 @@
           }')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">Delete</button>
         </td>
       </tr>
-    `
-          )
+    `;
+          })
           .join("");
       }
 
