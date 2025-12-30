@@ -1,40 +1,58 @@
-// Mobile Menu Toggle Function
+// Mobile Menu Toggle Function - FIXED VERSION
 function toggleMobileMenu() {
-  const mobileMenu = document.getElementById("mobileMenu");
-  if (mobileMenu) {
-    mobileMenu.classList.toggle("hidden");
+  const menu = document.getElementById("mobileMenu");
+  const btn = document.getElementById("mobileMenuBtn");
+
+  if (!menu || !btn) {
+    console.error("Mobile menu elements not found");
+    return;
+  }
+
+  // Toggle the hidden class
+  menu.classList.toggle("hidden");
+
+  // Change icon
+  if (menu.classList.contains("hidden")) {
+    btn.innerHTML = '<i class="fas fa-bars text-2xl text-gray-700"></i>';
+  } else {
+    btn.innerHTML = '<i class="fas fa-times text-2xl text-gray-700"></i>';
   }
 }
 
-// Close mobile menu when clicking outside
-document.addEventListener("click", function (event) {
-  const mobileMenu = document.getElementById("mobileMenu");
-  const menuButton = event.target.closest(
-    'button[onclick="toggleMobileMenu()"]'
-  );
+function closeMobileMenu() {
+  const menu = document.getElementById("mobileMenu");
+  const btn = document.getElementById("mobileMenuBtn");
 
-  if (mobileMenu && !mobileMenu.contains(event.target) && !menuButton) {
-    mobileMenu.classList.add("hidden");
+  if (!menu || !btn) return;
+
+  menu.classList.add("hidden");
+  btn.innerHTML = '<i class="fas fa-bars text-2xl text-gray-700"></i>';
+}
+
+// Close menu when clicking outside
+document.addEventListener("click", function (e) {
+  const menu = document.getElementById("mobileMenu");
+  const btn = document.getElementById("mobileMenuBtn");
+
+  if (!menu || !btn) return;
+
+  // Check if click is outside both menu and button
+  if (!menu.contains(e.target) && !btn.contains(e.target)) {
+    if (!menu.classList.contains("hidden")) {
+      closeMobileMenu();
+    }
   }
 });
 
-// Image fallback handler for all pages
+// Prevent menu from closing when clicking inside it
 document.addEventListener("DOMContentLoaded", function () {
-  // Set fallback for all images on the page
-  document.querySelectorAll("img").forEach((img) => {
-    if (!img.hasAttribute("data-fallback-set")) {
-      img.setAttribute("data-fallback-set", "true");
-      img.onerror = function () {
-        this.onerror = null; // Prevent infinite loop
-        // Try logo first, then colored placeholder
-        if (!this.src.includes("/images/logo.jpeg")) {
-          this.src = "/images/logo.jpeg";
-        } else {
-          // If logo also fails, use a data URL placeholder
-          this.src =
-            'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="200"%3E%3Crect fill="%23f3f4f6" width="300" height="200"/%3E%3Ctext fill="%239ca3af" x="50%25" y="50%25" font-family="Arial" font-size="16" dominant-baseline="middle" text-anchor="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
-        }
-      };
-    }
-  });
+  const menu = document.getElementById("mobileMenu");
+  if (menu) {
+    menu.addEventListener("click", function (e) {
+      // Only close if clicking on a link
+      if (e.target.tagName === "A") {
+        closeMobileMenu();
+      }
+    });
+  }
 });

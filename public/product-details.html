@@ -160,42 +160,34 @@
             >
           </div>
           <div class="md:hidden flex items-center space-x-4 pr-4">
-            <button
-              onclick="toggleMobileMenu()"
-              class="mobile-menu-btn"
-              id="mobileMenuBtn"
-            >
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
               <i class="fas fa-bars text-2xl text-gray-700"></i>
             </button>
           </div>
         </div>
         <div
           id="mobileMenu"
-          class="hidden md:hidden absolute top-full left-0 w-full bg-white/98 backdrop-blur-lg shadow-2xl"
+          class="hidden md:hidden absolute top-full left-0 w-full bg-white backdrop-blur-lg shadow-2xl"
         >
-          <div class="flex flex-col items-center py-8 space-y-6">
+          <div class="flex flex-col items-center py-8 space-y-6 bg-white">
             <a
               href="index.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="closeMobileMenu()"
               >Home</a
             >
             <a
               href="index.html#products"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="closeMobileMenu()"
               >Products</a
             >
             <a
               href="About.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="closeMobileMenu()"
               >About Us</a
             >
             <a
               href="contact.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="closeMobileMenu()"
               >Contact Us</a
             >
           </div>
@@ -498,7 +490,13 @@
               ></a>
             </div>
             <p class="text-sm text-gray-400 mt-4">
-              Contact: 03327372364 | Email: zdspices@gmail.com
+              Contact: 03327372364 | Email:
+              <a
+                href="/cdn-cgi/l/email-protection"
+                class="__cf_email__"
+                data-cfemail="42382631322b21273102252f232b2e6c212d2f"
+                >[email&#160;protected]</a
+              >
             </p>
           </div>
         </div>
@@ -513,6 +511,10 @@
       </div>
     </footer>
 
+    <script
+      data-cfasync="false"
+      src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+    ></script>
     <script>
       let currentProduct = null;
       let currentSlide = 0;
@@ -813,8 +815,11 @@
         window.print();
       }
 
-      // Load product on page load
-      loadProduct();
+      // Initialize
+      window.addEventListener("DOMContentLoaded", () => {
+        loadProductDetails();
+      });
     </script>
+    <script src="js/navbar.js"></script>
   </body>
 </html>

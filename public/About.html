@@ -81,7 +81,7 @@
 
           <!-- Mobile Buttons -->
           <div class="md:hidden flex items-center space-x-4 pr-4">
-            <button onclick="toggleMobileMenu()" class="p-3">
+            <button class="p-3">
               <i class="fas fa-bars text-2xl text-gray-700"></i>
             </button>
           </div>
@@ -90,32 +90,28 @@
         <!-- Mobile Menu -->
         <div
           id="mobileMenu"
-          class="hidden md:hidden absolute top-full left-0 w-full bg-white/98 backdrop-blur-lg shadow-2xl"
+          class="hidden md:hidden absolute top-full left-0 w-full bg-white backdrop-blur-lg shadow-2xl"
         >
-          <div class="flex flex-col items-center py-8 space-y-6">
+          <div class="flex flex-col items-center py-8 space-y-6 bg-white">
             <a
               href="/"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="toggleMobileMenu()"
               >Home</a
             >
             <a
               href="/#products"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="toggleMobileMenu()"
               >Products</a
             >
             <a
               href="/About.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="toggleMobileMenu()"
               >About Us</a
             >
             <!-- Updated: Now opens full contact page -->
             <a
               href="/contact.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="toggleMobileMenu()"
               >Contact Us</a
             >
             <!-- Admin button removed from mobile menu -->
@@ -264,7 +260,13 @@
               ></a>
             </div>
             <p class="text-sm text-gray-400 mt-4">
-              Contact: 03327372364 | Email: zdspices@gmail.com
+              Contact: 03327372364 | Email:
+              <a
+                href="/cdn-cgi/l/email-protection"
+                class="__cf_email__"
+                data-cfemail="eb918f989b82888e98ab8c868a8287c5888486"
+                >[email&#160;protected]</a
+              >
             </p>
           </div>
         </div>
