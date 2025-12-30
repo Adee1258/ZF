@@ -25,10 +25,37 @@
         background-size: cover;
         background-position: center;
       }
+
+      /* Mobile menu button fix */
+      .mobile-menu-btn {
+        background: transparent;
+        border: none;
+        padding: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .mobile-menu-btn:hover {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+      }
+
+      /* Mobile menu smooth */
+      #mobileMenu {
+        transition: max-height 0.3s ease-in-out;
+        max-height: 0;
+        overflow: hidden;
+      }
+
+      #mobileMenu:not(.hidden) {
+        max-height: 500px;
+      }
     </style>
   </head>
   <body class="bg-gray-100">
-    <!-- Super Enhanced NAVBAR (Updated: Contact Us → Full Page) -->
+    <!-- Super Enhanced NAVBAR -->
     <nav
       class="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-lg z-50 transition-all duration-300"
     >
@@ -58,7 +85,7 @@
               Home
             </a>
             <a
-              href="/#products"
+              href="index.html#products"
               class="text-gray-700 hover:text-orange-600 font-medium transition duration-300 text-lg"
             >
               Products
@@ -69,19 +96,17 @@
             >
               About Us
             </a>
-            <!-- Updated: Now opens full contact page -->
             <a
               href="contact.html"
               class="text-gray-700 hover:text-orange-600 font-medium transition duration-300 text-lg"
             >
               Contact Us
             </a>
-            <!-- Admin button removed from desktop navbar -->
           </div>
 
           <!-- Mobile Buttons -->
           <div class="md:hidden flex items-center space-x-4 pr-4">
-            <button class="p-3">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
               <i class="fas fa-bars text-2xl text-gray-700"></i>
             </button>
           </div>
@@ -90,31 +115,29 @@
         <!-- Mobile Menu -->
         <div
           id="mobileMenu"
-          class="hidden md:hidden absolute top-full left-0 w-full bg-white backdrop-blur-lg shadow-2xl"
+          class="hidden md:hidden absolute top-full left-0 w-full bg-white backdrop-blur-lg shadow-2xl border-t-2 border-orange-200"
         >
           <div class="flex flex-col items-center py-8 space-y-6 bg-white">
             <a
-              href="/"
+              href="index.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               >Home</a
             >
             <a
-              href="/#products"
+              href="index.html#products"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               >Products</a
             >
             <a
-              href="/About.html"
+              href="About.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               >About Us</a
             >
-            <!-- Updated: Now opens full contact page -->
             <a
-              href="/contact.html"
+              href="contact.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               >Contact Us</a
             >
-            <!-- Admin button removed from mobile menu -->
           </div>
         </div>
       </div>
@@ -195,7 +218,7 @@
       </div>
     </section>
 
-    <!-- Footer (Updated Contact link) -->
+    <!-- Footer -->
     <footer class="bg-gray-800 text-white py-8 mt-20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-4 gap-8">
@@ -210,23 +233,28 @@
           <div>
             <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
             <ul class="space-y-2 text-gray-400">
-              <li><a href="/" class="hover:text-white transition">Home</a></li>
               <li>
-                <a href="/#products" class="hover:text-white transition"
+                <a href="index.html" class="hover:text-white transition"
+                  >Home</a
+                >
+              </li>
+              <li>
+                <a
+                  href="index.html#products"
+                  class="hover:text-white transition"
                   >Products</a
                 >
               </li>
               <li>
-                <a href="/about.html" class="hover:text-white transition"
+                <a href="About.html" class="hover:text-white transition"
                   >About Us</a
                 >
               </li>
               <li>
-                <a href="/contact.html" class="hover:text-white transition"
+                <a href="contact.html" class="hover:text-white transition"
                   >Contact</a
                 >
               </li>
-              <!-- Removed admin link from footer -->
             </ul>
           </div>
           <div>

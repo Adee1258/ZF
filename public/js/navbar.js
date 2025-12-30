@@ -1,4 +1,4 @@
-// Mobile Menu Toggle Function - FIXED VERSION
+// Mobile Menu Toggle Function - FULLY FIXED VERSION
 function toggleMobileMenu() {
   const menu = document.getElementById("mobileMenu");
   const btn = document.getElementById("mobileMenuBtn");
@@ -29,6 +29,19 @@ function closeMobileMenu() {
   btn.innerHTML = '<i class="fas fa-bars text-2xl text-gray-700"></i>';
 }
 
+// Initialize on page load
+document.addEventListener("DOMContentLoaded", function () {
+  const btn = document.getElementById("mobileMenuBtn");
+
+  if (btn) {
+    // Add click event listener to menu button
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      toggleMobileMenu();
+    });
+  }
+});
+
 // Close menu when clicking outside
 document.addEventListener("click", function (e) {
   const menu = document.getElementById("mobileMenu");
@@ -44,12 +57,12 @@ document.addEventListener("click", function (e) {
   }
 });
 
-// Prevent menu from closing when clicking inside it
+// Close menu when clicking inside it on any link
 document.addEventListener("DOMContentLoaded", function () {
   const menu = document.getElementById("mobileMenu");
   if (menu) {
     menu.addEventListener("click", function (e) {
-      // Only close if clicking on a link
+      // Close if clicking on a link
       if (e.target.tagName === "A") {
         closeMobileMenu();
       }

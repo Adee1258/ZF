@@ -165,7 +165,11 @@
           </div>
 
           <div class="md:hidden flex items-center space-x-4 pr-4">
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <button
+              class="mobile-menu-btn"
+              id="mobileMenuBtn"
+              onclick="toggleMobileMenu()"
+            >
               <i class="fas fa-bars text-2xl text-gray-700"></i>
             </button>
           </div>
@@ -188,12 +192,12 @@
               >Products</a
             >
             <a
-              href="/About.html"
+              href="About.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               >About Us</a
             >
             <a
-              href="/contact.html"
+              href="contact.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
               >Contact Us</a
             >
@@ -216,6 +220,7 @@
           Wholesale Quality. Authentic Taste. Direct from Source.
         </p>
         <button
+          onclick="scrollToProducts()"
           class="bg-gradient-to-r from-red-600 to-orange-600 text-white px-12 py-5 rounded-full text-xl font-bold hover:from-red-700 hover:to-orange-700 shadow-2xl transform hover:scale-105 transition-all duration-300"
         >
           Explore Products <i class="fas fa-arrow-down ml-3"></i>
@@ -290,12 +295,12 @@
                 >
               </li>
               <li>
-                <a href="/About.html" class="hover:text-white transition"
+                <a href="About.html" class="hover:text-white transition"
                   >About Us</a
                 >
               </li>
               <li>
-                <a href="/contact.html" class="hover:text-white transition"
+                <a href="contact.html" class="hover:text-white transition"
                   >Contact</a
                 >
               </li>
@@ -332,7 +337,13 @@
               ></a>
             </div>
             <p class="text-sm text-gray-400 mt-4">
-              Contact: 03327372364 | Email: zdspices@gmail.com
+              Contact: 03327372364 | Email:
+              <a
+                href="/cdn-cgi/l/email-protection"
+                class="__cf_email__"
+                data-cfemail="59233d2a29303a3c2a193e34383035773a3634"
+                >[email&#160;protected]</a
+              >
             </p>
           </div>
         </div>
@@ -347,10 +358,66 @@
       </div>
     </footer>
 
+    <script
+      data-cfasync="false"
+      src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+    ></script>
     <script>
       let products = [];
       let secretClickCount = 0;
       let secretClickTimer = null;
+
+      // MOBILE MENU TOGGLE
+      function toggleMobileMenu() {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+
+        if (!menu || !btn) return;
+
+        menu.classList.toggle("hidden");
+
+        if (menu.classList.contains("hidden")) {
+          btn.innerHTML = '<i class="fas fa-bars text-2xl text-gray-700"></i>';
+        } else {
+          btn.innerHTML = '<i class="fas fa-times text-2xl text-gray-700"></i>';
+        }
+      }
+
+      function closeMobileMenu() {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+
+        if (!menu || !btn) return;
+
+        menu.classList.add("hidden");
+        btn.innerHTML = '<i class="fas fa-bars text-2xl text-gray-700"></i>';
+      }
+
+      // Close menu when clicking outside
+      document.addEventListener("click", function (e) {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+
+        if (!menu || !btn) return;
+
+        if (!menu.contains(e.target) && !btn.contains(e.target)) {
+          if (!menu.classList.contains("hidden")) {
+            closeMobileMenu();
+          }
+        }
+      });
+
+      // Close menu when clicking on links
+      document.addEventListener("DOMContentLoaded", function () {
+        const menu = document.getElementById("mobileMenu");
+        if (menu) {
+          menu.addEventListener("click", function (e) {
+            if (e.target.tagName === "A") {
+              closeMobileMenu();
+            }
+          });
+        }
+      });
 
       // SECRET ADMIN ACCESS
       function handleSecretAdminAccess() {
@@ -394,17 +461,14 @@
 
         const imgStr = String(img).trim();
 
-        // If base64 data URL
         if (imgStr.startsWith("data:image")) {
           return imgStr;
         }
 
-        // If HTTP URL
         if (imgStr.startsWith("http")) {
           return imgStr;
         }
 
-        // If file path
         if (imgStr) {
           return `${API_BASE}${imgStr.startsWith("/") ? imgStr : "/" + imgStr}`;
         }
@@ -416,7 +480,7 @@
         return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect width='300' height='200' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
       }
 
-      // Load Products - FIXED IMAGE HANDLING
+      // Load Products
       async function loadProducts() {
         const search = document.getElementById("search").value.toLowerCase();
         const category = document.getElementById("categoryFilter").value;
@@ -479,7 +543,6 @@
             const discountedPrice =
               p.price - (p.price * (p.discount || 0)) / 100;
 
-            // Get first image with proper handling
             const firstImg =
               p.images && p.images.length > 0
                 ? getImageUrl(p.images[0])
@@ -562,8 +625,6 @@
         .getElementById("categoryFilter")
         .addEventListener("change", loadProducts);
     </script>
-
-    <!-- Load navbar script -->
     <script src="js/navbar.js"></script>
   </body>
 </html>
