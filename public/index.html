@@ -20,7 +20,6 @@
         theme: { extend: { fontFamily: { sans: ["Poppins", "sans-serif"] } } },
       };
 
-      // API Configuration - FIXED
       const API_BASE = "https://api.zdspices.pk";
     </script>
     <style>
@@ -66,9 +65,44 @@
         animation: secretPulse 0.3s ease-in-out;
       }
 
-      /* Mobile menu smooth transitions */
+      /* PRODUCT IMAGE FIX */
+      .product-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background: #e5e7eb;
+        display: block;
+      }
+
+      .product-img-container {
+        width: 100%;
+        height: 224px;
+        background: #e5e7eb;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Mobile menu button fix */
+      .mobile-menu-btn {
+        background: transparent;
+        border: none;
+        padding: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .mobile-menu-btn:hover {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+      }
+
+      /* Mobile menu smooth */
       #mobileMenu {
-        transition: all 0.3s ease;
+        transition: max-height 0.3s ease-in-out;
         max-height: 0;
         overflow: hidden;
       }
@@ -131,7 +165,11 @@
           </div>
 
           <div class="md:hidden flex items-center space-x-4 pr-4">
-            <button onclick="toggleMobileMenu()" class="p-3" id="mobileMenuBtn">
+            <button
+              onclick="toggleMobileMenu()"
+              class="mobile-menu-btn"
+              id="mobileMenuBtn"
+            >
               <i class="fas fa-bars text-2xl text-gray-700"></i>
             </button>
           </div>
@@ -387,6 +425,34 @@
         window.location.href = `/product-details.html?id=${id}`;
       }
 
+      // IMAGE URL DETECTION - FIXED
+      function getImageUrl(img) {
+        if (!img) return getPlaceholderImage();
+
+        const imgStr = String(img).trim();
+
+        // If base64 data URL
+        if (imgStr.startsWith("data:image")) {
+          return imgStr;
+        }
+
+        // If HTTP URL
+        if (imgStr.startsWith("http")) {
+          return imgStr;
+        }
+
+        // If file path
+        if (imgStr) {
+          return `${API_BASE}${imgStr.startsWith("/") ? imgStr : "/" + imgStr}`;
+        }
+
+        return getPlaceholderImage();
+      }
+
+      function getPlaceholderImage() {
+        return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect width='300' height='200' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
+      }
+
       // Load Products - FIXED IMAGE HANDLING
       async function loadProducts() {
         const search = document.getElementById("search").value.toLowerCase();
@@ -436,31 +502,6 @@
         }
       }
 
-      function getImageUrl(img) {
-        if (!img) return getPlaceholderImage();
-
-        // If image is base64 data URL
-        if (typeof img === "string" && img.startsWith("data:image")) {
-          return img;
-        }
-
-        // If image is HTTP URL
-        if (typeof img === "string" && img.startsWith("http")) {
-          return img;
-        }
-
-        // If image is a path, construct full URL
-        if (typeof img === "string") {
-          return `${API_BASE}${img.startsWith("/") ? img : "/" + img}`;
-        }
-
-        return getPlaceholderImage();
-      }
-
-      function getPlaceholderImage() {
-        return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect width='300' height='200' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
-      }
-
       function displayProducts(prods) {
         const grid = document.getElementById("productsGrid");
 
@@ -488,15 +529,10 @@
               <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg cursor-pointer border border-gray-200 dark:border-gray-700 hover:border-blue-300 transition-colors" onclick="goToDetails('${
                 p._id
               }')">
-                <div class="relative h-56 overflow-hidden bg-gray-100">
+                <div class="product-img-container">
                   <img src="${firstImg}" alt="${
               p.name
-            }" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" onerror="this.src='${getPlaceholderImage()}'">
-                  ${
-                    p.discount > 0
-                      ? `<div class="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg transform rotate-[-5deg]">-${p.discount}% OFF</div>`
-                      : ""
-                  }
+            }" class="product-img" onerror="this.src='${getPlaceholderImage()}'">
                 </div>
                 <div class="p-6">
                   <h3 class="font-bold text-xl mb-3 line-clamp-1">${p.name}</h3>
@@ -514,6 +550,11 @@
                         : ""
                     }
                   </div>
+                  ${
+                    p.discount > 0
+                      ? `<div class="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">-${p.discount}% OFF</div>`
+                      : ""
+                  }
                   <div class="mb-4">
                     <div class="flex items-center mb-2">
                       <div class="flex text-yellow-400">

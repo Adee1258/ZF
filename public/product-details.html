@@ -20,7 +20,6 @@
         theme: { extend: { fontFamily: { sans: ["Poppins", "sans-serif"] } } },
       };
 
-      // API Configuration
       const API_BASE = location.hostname.includes("zdspices.pk")
         ? "https://api.zdspices.pk"
         : `http://${location.hostname}:5000`;
@@ -31,9 +30,21 @@
       }
       .carousel-img {
         transition: transform 0.3s ease;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background: #e5e7eb;
+        display: block;
       }
       .carousel-img:hover {
         transform: scale(1.05);
+      }
+      .carousel-container {
+        width: 100%;
+        height: 500px;
+        background: #e5e7eb;
+        position: relative;
+        overflow: hidden;
       }
       .loading-spinner {
         animation: spin 1s linear infinite;
@@ -76,6 +87,33 @@
           transform: translateX(0);
           opacity: 1;
         }
+      }
+
+      /* Mobile menu button fix */
+      .mobile-menu-btn {
+        background: transparent;
+        border: none;
+        padding: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .mobile-menu-btn:hover {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+      }
+
+      /* Mobile menu smooth */
+      #mobileMenu {
+        transition: max-height 0.3s ease-in-out;
+        max-height: 0;
+        overflow: hidden;
+      }
+
+      #mobileMenu:not(.hidden) {
+        max-height: 500px;
       }
     </style>
   </head>
@@ -122,7 +160,11 @@
             >
           </div>
           <div class="md:hidden flex items-center space-x-4 pr-4">
-            <button onclick="toggleMobileMenu()" class="p-3" id="mobileMenuBtn">
+            <button
+              onclick="toggleMobileMenu()"
+              class="mobile-menu-btn"
+              id="mobileMenuBtn"
+            >
               <i class="fas fa-bars text-2xl text-gray-700"></i>
             </button>
           </div>
@@ -175,13 +217,10 @@
           <div
             class="product-image-section relative rounded-xl overflow-hidden shadow-xl"
           >
-            <div
-              id="carousel"
-              class="relative w-full h-full min-h-[500px] rounded-xl bg-gray-100"
-            ></div>
+            <div id="carousel" class="carousel-container"></div>
             <div
               id="thumbsContainer"
-              class="flex justify-center mt-4 space-x-2"
+              class="flex justify-center mt-4 space-x-2 flex-wrap"
             ></div>
             <button
               onclick="prevSlide()"
@@ -272,8 +311,8 @@
                 class="hidden bg-orange-50 border-l-4 border-orange-400 p-4"
               >
                 <p class="text-orange-700 text-sm">
-                  ⚠️ Limited stock! Only <span id="maxStock"></span> units
-                  available.
+                  ⚠️ Limited stock! Only
+                  <span id="warningMaxStock"></span> units available.
                 </p>
               </div>
 
@@ -516,17 +555,12 @@
         if (!img)
           return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Crect width='500' height='500' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
 
-        if (typeof img === "string" && img.startsWith("data:image")) {
-          return img;
-        }
+        const imgStr = String(img).trim();
 
-        if (typeof img === "string" && img.startsWith("http")) {
-          return img;
-        }
-
-        if (typeof img === "string") {
-          return `${API_BASE}${img.startsWith("/") ? img : "/" + img}`;
-        }
+        if (imgStr.startsWith("data:image")) return imgStr;
+        if (imgStr.startsWith("http")) return imgStr;
+        if (imgStr)
+          return `${API_BASE}${imgStr.startsWith("/") ? imgStr : "/" + imgStr}`;
 
         return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Crect width='500' height='500' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
       }
@@ -605,9 +639,9 @@
         carousel.innerHTML = images
           .map(
             (img, i) => `
-          <img src="${img}" alt="Product" class="carousel-img w-full h-full object-cover absolute inset-0" style="display: ${
+          <img src="${img}" alt="Product" class="carousel-img absolute inset-0" style="display: ${
               i === 0 ? "block" : "none"
-            }; top: 0; left: 0;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22500%22 height=%22500%22%3E%3Crect width=%22500%22 height=%22500%22 fill=%22%23e5e7eb%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 fill=%22%239ca3af%22%3ENo Image%3C/text%3E%3C/svg%3E';">
+            };" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22500%22 height=%22500%22%3E%3Crect width=%22500%22 height=%22500%22 fill=%22%23e5e7eb%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 fill=%22%239ca3af%22%3ENo Image%3C/text%3E%3C/svg%3E';">
         `
           )
           .join("");
