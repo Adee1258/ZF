@@ -36,7 +36,7 @@
         box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
       }
 
-      /* Mobile menu button fix */
+      /* MOBILE MENU FIXES */
       .mobile-menu-btn {
         background: transparent;
         border: none;
@@ -45,22 +45,92 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 60;
+        position: relative;
       }
 
       .mobile-menu-btn:hover {
-        background: rgba(0, 0, 0, 0.1);
+        background: rgba(249, 115, 22, 0.2);
         border-radius: 4px;
       }
 
-      /* Mobile menu smooth */
+      /* Mobile Menu - Slide from top with smooth animation */
       #mobileMenu {
-        transition: max-height 0.3s ease-in-out;
-        max-height: 0;
-        overflow: hidden;
+        display: none;
+        position: fixed;
+        top: 80px;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #ff6b35 0%, #f97316 100%);
+        backdrop-filter: blur(10px);
+        animation: slideDown 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 50;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
       }
 
-      #mobileMenu:not(.hidden) {
-        max-height: 500px;
+      #mobileMenu.active {
+        display: block;
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+      }
+
+      #mobileMenu.closing {
+        animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      }
+
+      /* Menu Items Styling */
+      #mobileMenu a,
+      #mobileMenu button {
+        color: white !important;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        padding: 15px 20px;
+        display: block;
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      #mobileMenu a:hover,
+      #mobileMenu button:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateX(5px);
+      }
+
+      #mobileMenu a:active,
+      #mobileMenu button:active {
+        background: rgba(255, 255, 255, 0.25);
+      }
+
+      /* Icon Color */
+      .mobile-menu-btn i {
+        color: #f97316;
+        transition: all 0.3s ease;
+      }
+
+      .mobile-menu-btn:hover i {
+        color: #ea580c;
       }
     </style>
   </head>
@@ -112,8 +182,12 @@
 
           <!-- Mobile Menu Button -->
           <div class="md:hidden flex items-center space-x-4 pr-4">
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
-              <i class="fas fa-bars text-2xl text-gray-700"></i>
+            <button
+              id="mobileMenuBtn"
+              class="mobile-menu-btn"
+              onclick="event.stopPropagation(); toggleMobileMenu();"
+            >
+              <i class="fas fa-bars text-3xl"></i>
             </button>
           </div>
         </div>
@@ -121,30 +195,37 @@
         <!-- Mobile Menu -->
         <div
           id="mobileMenu"
-          class="hidden md:hidden absolute top-full left-0 w-full bg-white backdrop-blur-lg shadow-2xl border-t-2 border-orange-200"
+          class="md:hidden"
+          onclick="event.stopPropagation();"
         >
-          <div class="flex flex-col items-center py-8 space-y-6 bg-white">
-            <a
-              href="index.html"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              >Home</a
-            >
-            <a
-              href="index.html#products"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              >Products</a
-            >
-            <a
-              href="About.html"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              >About Us</a
-            >
-            <a
-              href="contact.html"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              >Contact Us</a
-            >
-          </div>
+          <a
+            href="index.html"
+            class="text-xl font-medium transition"
+            onclick="closeMobileMenu(); event.stopPropagation();"
+          >
+            Home
+          </a>
+          <a
+            href="index.html#products"
+            class="text-xl font-medium transition"
+            onclick="closeMobileMenu(); event.stopPropagation();"
+          >
+            Products
+          </a>
+          <a
+            href="About.html"
+            class="text-xl font-medium transition"
+            onclick="closeMobileMenu(); event.stopPropagation();"
+          >
+            About Us
+          </a>
+          <a
+            href="contact.html"
+            class="text-xl font-medium transition"
+            onclick="closeMobileMenu(); event.stopPropagation();"
+          >
+            Contact Us
+          </a>
         </div>
       </div>
     </nav>
@@ -246,7 +327,7 @@
 
               <!-- Email -->
               <a
-                href="/cdn-cgi/l/email-protection#cfb5abbcbfa6acaabc8fa8a2aea6a3e1aca0a2"
+                href="mailto:zdspices@gmail.com"
                 class="flex items-center space-x-6 contact-icon"
               >
                 <div class="bg-red-100 p-6 rounded-full">
@@ -254,13 +335,7 @@
                 </div>
                 <div>
                   <p class="text-2xl font-bold">Email</p>
-                  <p class="text-xl text-gray-600">
-                    <span
-                      class="__cf_email__"
-                      data-cfemail="c5bfa1b6b5aca6a0b685a2a8a4aca9eba6aaa8"
-                      >[email&#160;protected]</span
-                    >
-                  </p>
+                  <p class="text-xl text-gray-600">zdspices@gmail.com</p>
                   <p class="text-red-600 font-medium">Send Email</p>
                 </div>
               </a>
@@ -291,7 +366,7 @@
               </div>
             </div>
 
-            <!-- Updated Map -->
+            <!-- Map -->
             <div
               class="mt-12 w-full h-96 rounded-xl overflow-hidden shadow-2xl border-4 border-orange-300"
             >
@@ -379,13 +454,7 @@
               ></a>
             </div>
             <p class="text-sm text-gray-400 mt-4">
-              Contact: 03327372364 | Email:
-              <a
-                href="/cdn-cgi/l/email-protection"
-                class="__cf_email__"
-                data-cfemail="077d6374776e64627447606a666e6b2964686a"
-                >[email&#160;protected]</a
-              >
+              Contact: 03327372364 | Email: zdspices@gmail.com
             </p>
           </div>
         </div>
@@ -393,19 +462,76 @@
           class="border-t border-gray-700 mt-8 pt-4 text-center text-gray-400"
         >
           <p>
-            &copy; 2025 ZIKRIYA DARBAR FOOD PRODUCTS. All rights reserved. |
-            Made with ❤️ in Pakistan
+            © 2025 ZIKRIYA DARBAR FOOD PRODUCTS. All rights reserved. | Made
+            with love in Pakistan
           </p>
         </div>
       </div>
     </footer>
 
-    <script
-      data-cfasync="false"
-      src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
-    ></script>
     <script>
-      // Form Submit
+      let menuOpen = false;
+
+      function toggleMobileMenu() {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+
+        if (!menu || !btn) return;
+
+        menuOpen = !menuOpen;
+
+        if (menuOpen) {
+          menu.classList.remove("closing");
+          menu.classList.add("active");
+          btn.innerHTML = '<i class="fas fa-times text-3xl"></i>';
+        } else {
+          menu.classList.add("closing");
+          setTimeout(() => {
+            menu.classList.remove("active");
+            menu.classList.remove("closing");
+            btn.innerHTML = '<i class="fas fa-bars text-3xl"></i>';
+          }, 300);
+        }
+      }
+
+      function closeMobileMenu() {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+
+        if (!menu || !btn || !menuOpen) return;
+
+        menuOpen = false;
+        menu.classList.add("closing");
+        setTimeout(() => {
+          menu.classList.remove("active");
+          menu.classList.remove("closing");
+          btn.innerHTML = '<i class="fas fa-bars text-3xl"></i>';
+        }, 300);
+      }
+
+      // Close menu when clicking outside
+      document.addEventListener("click", function (e) {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+        const navbar = document.querySelector("nav");
+
+        if (!menu || !btn || !navbar) return;
+
+        if (btn.contains(e.target) || navbar.contains(e.target)) return;
+
+        if (!menu.contains(e.target) && menuOpen) {
+          closeMobileMenu();
+        }
+      });
+
+      // Close menu on scroll
+      window.addEventListener("scroll", function () {
+        if (menuOpen) {
+          closeMobileMenu();
+        }
+      });
+
+      // Contact Form
       document
         .getElementById("contactForm")
         .addEventListener("submit", async (e) => {
@@ -429,6 +555,5 @@
           }
         });
     </script>
-    <script src="js/navbar.js"></script>
   </body>
 </html>
