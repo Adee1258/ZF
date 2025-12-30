@@ -236,7 +236,7 @@
             <button
               id="mobileMenuBtn"
               class="mobile-menu-btn"
-              onclick="toggleMobileMenu()"
+              onclick="event.stopPropagation(); toggleMobileMenu();"
             >
               <i class="fas fa-bars text-3xl"></i>
             </button>
@@ -244,32 +244,36 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div id="mobileMenu" class="md:hidden">
+        <div
+          id="mobileMenu"
+          class="md:hidden"
+          onclick="event.stopPropagation();"
+        >
           <a
             href="#home"
             class="text-xl font-medium transition"
-            onclick="closeMobileMenu()"
+            onclick="closeMobileMenu(); event.stopPropagation();"
           >
             Home
           </a>
           <a
             href="#products"
             class="text-xl font-medium transition"
-            onclick="closeMobileMenu()"
+            onclick="closeMobileMenu(); event.stopPropagation();"
           >
             Products
           </a>
           <a
             href="/About.html"
             class="text-xl font-medium transition"
-            onclick="closeMobileMenu()"
+            onclick="closeMobileMenu(); event.stopPropagation();"
           >
             About Us
           </a>
           <a
             href="/contact.html"
             class="text-xl font-medium transition"
-            onclick="closeMobileMenu()"
+            onclick="closeMobileMenu(); event.stopPropagation();"
           >
             Contact Us
           </a>
@@ -592,10 +596,15 @@
       document.addEventListener("click", function (e) {
         const menu = document.getElementById("mobileMenu");
         const btn = document.getElementById("mobileMenuBtn");
+        const navbar = document.querySelector("nav");
 
-        if (!menu || !btn) return;
+        if (!menu || !btn || !navbar) return;
 
-        if (!menu.contains(e.target) && !btn.contains(e.target) && menuOpen) {
+        // اگر button یا navbar پر click ہے تو کچھ نہ کریں
+        if (btn.contains(e.target) || navbar.contains(e.target)) return;
+
+        // صرف menu کے باہر click کریں تو بند کریں
+        if (!menu.contains(e.target) && menuOpen) {
           closeMobileMenu();
         }
       });
