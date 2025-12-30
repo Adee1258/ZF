@@ -91,7 +91,7 @@
               src="/images/logo.jpeg"
               alt="Logo"
               class="h-24 w-24 object-contain rounded-full shadow-2xl border-4 border-orange-500 ring-4 ring-orange-200"
-              onerror="this.src='https://via.placeholder.com/96?text=ZD';"
+              onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%23f97316%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 fill=%22white%22%3EZD%3C/text%3E%3C/svg%3E';"
             />
             <h1
               class="text-2xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-500 to-yellow-600 tracking-wide"
@@ -106,7 +106,7 @@
               >Home</a
             >
             <a
-              href="/#products"
+              href="index.html#products"
               class="text-gray-700 hover:text-orange-600 font-medium transition duration-300 text-lg"
               >Products</a
             >
@@ -120,10 +120,9 @@
               class="text-gray-700 hover:text-orange-600 font-medium transition duration-300 text-lg"
               >Contact Us</a
             >
-            <!-- Admin button removed from navbar -->
           </div>
           <div class="md:hidden flex items-center space-x-4 pr-4">
-            <button onclick="toggleMobileMenu()" class="p-3">
+            <button onclick="toggleMobileMenu()" class="p-3" id="mobileMenuBtn">
               <i class="fas fa-bars text-2xl text-gray-700"></i>
             </button>
           </div>
@@ -134,30 +133,29 @@
         >
           <div class="flex flex-col items-center py-8 space-y-6">
             <a
-              href="/"
+              href="index.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="toggleMobileMenu()"
+              onclick="closeMobileMenu()"
               >Home</a
             >
             <a
-              href="/#products"
+              href="index.html#products"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="toggleMobileMenu()"
+              onclick="closeMobileMenu()"
               >Products</a
             >
             <a
-              href="/About.html"
+              href="About.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="toggleMobileMenu()"
+              onclick="closeMobileMenu()"
               >About Us</a
             >
             <a
-              href="/contact.html"
+              href="contact.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="toggleMobileMenu()"
+              onclick="closeMobileMenu()"
               >Contact Us</a
             >
-            <!-- Admin button removed from mobile menu -->
           </div>
         </div>
       </div>
@@ -179,7 +177,7 @@
           >
             <div
               id="carousel"
-              class="relative w-full h-full min-h-[500px] rounded-xl"
+              class="relative w-full h-full min-h-[500px] rounded-xl bg-gray-100"
             ></div>
             <div
               id="thumbsContainer"
@@ -222,49 +220,88 @@
                 ></span>
                 <span
                   id="productDiscount"
-                  class="text-red-500 line-through text-xl"
+                  class="text-gray-400 line-through text-lg"
                 ></span>
               </div>
-              <div class="flex items-center space-x-4">
-                <label class="text-sm font-medium text-gray-700">Stock:</label>
-                <div class="w-20 bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-50 p-4 rounded-lg">
+                <p class="text-sm text-gray-700 mb-2">Stock Availability</p>
+                <div class="w-full bg-gray-200 rounded-full h-3">
                   <div
                     id="stockBar"
-                    class="stock-bar bg-green-500 h-2 rounded-full"
+                    class="bg-gradient-to-r from-green-400 to-green-600 h-3 rounded-full stock-bar"
                   ></div>
                 </div>
-                <span id="productStock" class="text-sm text-gray-500"></span>
+                <p class="text-sm text-gray-600 mt-2">
+                  <span id="productStock"></span> (
+                  <span id="maxStock"></span> units available)
+                </p>
               </div>
             </div>
-            <div class="flex items-center space-x-4">
-              <label class="text-sm font-medium text-gray-700">Quantity:</label>
+
+            <!-- Quantity & Actions -->
+            <div class="space-y-4">
+              <div
+                class="flex items-center space-x-4 bg-gray-50 p-4 rounded-lg"
+              >
+                <span class="text-sm font-semibold text-gray-700"
+                  >Quantity:</span
+                >
+                <button
+                  id="decBtn"
+                  onclick="changeQty(-1)"
+                  class="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+                >
+                  <i class="fas fa-minus"></i>
+                </button>
+                <span
+                  id="qtyInput"
+                  class="text-lg font-bold bg-white px-6 py-2 rounded border"
+                  >1</span
+                >
+                <button
+                  id="incBtn"
+                  onclick="changeQty(1)"
+                  class="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+                >
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+
+              <div
+                id="stockWarning"
+                class="hidden bg-orange-50 border-l-4 border-orange-400 p-4"
+              >
+                <p class="text-orange-700 text-sm">
+                  ⚠️ Limited stock! Only <span id="maxStock"></span> units
+                  available.
+                </p>
+              </div>
+
               <button
-                onclick="changeQty(-1)"
-                id="decBtn"
-                class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300"
+                onclick="buyNow()"
+                class="w-full bg-gradient-to-r from-red-600 to-orange-600 text-white py-4 rounded-lg text-lg font-bold hover:from-red-700 hover:to-orange-700 transition shadow-lg"
               >
-                -
+                <i class="fas fa-shopping-cart mr-2"></i>Buy Now
               </button>
-              <span id="qtyInput" class="w-8 text-center text-lg font-bold"
-                >1</span
-              >
-              <button
-                onclick="changeQty(1)"
-                id="incBtn"
-                class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300"
-              >
-                +
-              </button>
-              <span id="stockWarning" class="text-red-500 text-sm hidden"
-                >Max available: <span id="maxStock"></span
-              ></span>
             </div>
-            <button
-              onclick="buyNow()"
-              class="w-full bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition shadow-lg"
+
+            <!-- Product Details -->
+            <div
+              class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 space-y-2"
             >
-              <i class="fas fa-bolt mr-2"></i>Buy Now
-            </button>
+              <p>
+                <strong class="text-gray-800">Category:</strong>
+                <span id="productCategory"></span>
+              </p>
+              <p>
+                <strong class="text-gray-800">Delivery:</strong> 2-3 days
+                nationwide
+              </p>
+              <p>
+                <strong class="text-gray-800">Packaging:</strong> Freshly packed
+                & sealed
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -273,141 +310,261 @@
     <!-- Buy Modal -->
     <div
       id="buyModal"
-      class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50"
+      class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50"
     >
-      <div class="bg-white p-6 rounded-xl max-w-md w-full mx-4">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Complete Purchase</h2>
-        <form id="buyForm">
-          <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Name</label
+      <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+        <h2 class="text-2xl font-bold mb-6 text-gray-800">Confirm Order</h2>
+        <form id="buyForm" class="space-y-4">
+          <input
+            type="text"
+            id="buyerName"
+            placeholder="Your Name"
+            required
+            class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500"
+          />
+          <input
+            type="tel"
+            id="buyerPhone"
+            placeholder="Phone Number (03XX-XXXXXXX)"
+            required
+            class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500"
+          />
+          <textarea
+            id="buyerAddress"
+            placeholder="Delivery Address"
+            required
+            rows="3"
+            class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500"
+          ></textarea>
+
+          <div class="bg-blue-50 p-4 rounded-lg">
+            <p class="text-sm text-gray-600">Total Amount</p>
+            <p id="totalAmount" class="text-2xl font-bold text-green-600"></p>
+          </div>
+
+          <div class="flex space-x-4">
+            <button
+              type="button"
+              onclick="closeBuyModal()"
+              class="flex-1 px-4 py-3 bg-gray-300 rounded-lg font-semibold hover:bg-gray-400 transition"
             >
-            <input
-              type="text"
-              id="buyerName"
-              required
-              class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Phone (03XXXXXXXXX)</label
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition"
             >
-            <input
-              type="tel"
-              id="buyerPhone"
-              pattern="03[0-9]{9}"
-              required
-              class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+              Place Order
+            </button>
           </div>
-          <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Address</label
-            >
-            <textarea
-              id="buyerAddress"
-              required
-              class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows="3"
-            ></textarea>
-          </div>
-          <div class="mb-4">
-            <p class="text-lg font-bold text-green-600">
-              Total: Rs <span id="totalAmount">0</span>
-            </p>
-          </div>
-          <button
-            type="submit"
-            class="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition"
-          >
-            Place Order <i class="fas fa-arrow-right ml-2"></i>
-          </button>
         </form>
-        <button
-          onclick="closeBuyModal()"
-          class="mt-4 text-gray-500 hover:text-gray-700 w-full"
-        >
-          Cancel
-        </button>
       </div>
     </div>
 
     <!-- Bill Modal -->
     <div
       id="billModal"
-      class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50"
+      class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50"
     >
-      <div class="bg-white p-6 rounded-xl max-w-md w-full mx-4">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Order Confirmed!</h2>
-        <div id="billContent" class="mb-4"></div>
+      <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+        <h2 class="text-2xl font-bold mb-6 text-gray-800">
+          Order Confirmation
+        </h2>
+        <div
+          id="billContent"
+          class="space-y-4 mb-6 max-h-96 overflow-y-auto"
+        ></div>
         <div class="flex space-x-4">
           <button
+            onclick="closeBillModal()"
+            class="flex-1 px-4 py-3 bg-gray-300 rounded-lg font-semibold hover:bg-gray-400 transition"
+          >
+            Close
+          </button>
+          <button
             onclick="printBill()"
-            class="flex-1 bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+            class="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
           >
             <i class="fas fa-print mr-2"></i>Print
           </button>
-          <button
-            onclick="downloadBill()"
-            class="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-600"
-          >
-            <i class="fas fa-download mr-2"></i>PDF
-          </button>
         </div>
-        <button
-          onclick="closeBillModal()"
-          class="mt-4 text-gray-500 hover:text-gray-700 w-full"
-        >
-          Close
-        </button>
       </div>
     </div>
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-8 mt-20">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center text-gray-400">
-          <p>Contact: 03327372364 | Email: zdspices@gmail.com</p>
-          <p class="mt-2">
-            &copy; 2025 ZIKRIYA DARBAR FOOD PRODUCTS. Made with ❤️ in Pakistan
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-4 gap-8">
+          <div>
+            <h3 class="text-lg font-bold mb-4">ZIKRIYA DARBAR FOOD PRODUCTS</h3>
+            <p class="text-gray-400">
+              Premium spices & fish for B2B. Fresh, authentic, delivered fast.
+            </p>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+            <ul class="space-y-2 text-gray-400">
+              <li>
+                <a href="index.html" class="hover:text-white transition"
+                  >Home</a
+                >
+              </li>
+              <li>
+                <a
+                  href="index.html#products"
+                  class="hover:text-white transition"
+                  >Products</a
+                >
+              </li>
+              <li>
+                <a href="About.html" class="hover:text-white transition"
+                  >About Us</a
+                >
+              </li>
+              <li>
+                <a href="contact.html" class="hover:text-white transition"
+                  >Contact</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Support</h4>
+            <ul class="space-y-2 text-gray-400">
+              <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+              <li>
+                <a href="#" class="hover:text-white transition">Shipping</a>
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition">Returns</a>
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition"
+                  >Privacy Policy</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Follow Us</h4>
+            <div class="flex space-x-4">
+              <a href="#" class="text-gray-400 hover:text-white transition"
+                ><i class="fab fa-facebook-f text-xl"></i
+              ></a>
+              <a href="#" class="text-gray-400 hover:text-white transition"
+                ><i class="fab fa-instagram text-xl"></i
+              ></a>
+              <a href="#" class="text-gray-400 hover:text-white transition"
+                ><i class="fab fa-twitter text-xl"></i
+              ></a>
+            </div>
+            <p class="text-sm text-gray-400 mt-4">
+              Contact: 03327372364 | Email: zdspices@gmail.com
+            </p>
+          </div>
+        </div>
+        <div
+          class="border-t border-gray-700 mt-8 pt-4 text-center text-gray-400"
+        >
+          <p>
+            &copy; 2025 ZIKRIYA DARBAR FOOD PRODUCTS. All rights reserved. |
+            Made with ❤️ in Pakistan
           </p>
         </div>
       </div>
     </footer>
 
     <script>
-      let currentProduct = {};
+      let currentProduct = null;
       let currentSlide = 0;
       let qty = 1;
 
-      
+      // Mobile Menu Functions
+      function toggleMobileMenu() {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+        menu.classList.toggle("hidden");
 
+        if (menu.classList.contains("hidden")) {
+          btn.innerHTML = '<i class="fas fa-bars text-2xl text-gray-700"></i>';
+        } else {
+          btn.innerHTML = '<i class="fas fa-times text-2xl text-gray-700"></i>';
+        }
+      }
+
+      function closeMobileMenu() {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+        menu.classList.add("hidden");
+        btn.innerHTML = '<i class="fas fa-bars text-2xl text-gray-700"></i>';
+      }
+
+      // Close menu when clicking outside
+      document.addEventListener("click", function (e) {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+
+        if (!menu.contains(e.target) && !btn.contains(e.target)) {
+          if (!menu.classList.contains("hidden")) {
+            closeMobileMenu();
+          }
+        }
+      });
+
+      // Get image URL with proper fallback
+      function getImageUrl(img) {
+        if (!img)
+          return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Crect width='500' height='500' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
+
+        if (typeof img === "string" && img.startsWith("data:image")) {
+          return img;
+        }
+
+        if (typeof img === "string" && img.startsWith("http")) {
+          return img;
+        }
+
+        if (typeof img === "string") {
+          return `${API_BASE}${img.startsWith("/") ? img : "/" + img}`;
+        }
+
+        return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Crect width='500' height='500' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
+      }
+
+      // Load product from URL
       async function loadProduct() {
-        const id = new URLSearchParams(window.location.search).get("id");
-        if (!id) return showError("Product ID missing");
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+
+        if (!id) {
+          document.getElementById("loadingSpinner").innerHTML =
+            '<p class="text-red-600 text-xl">Product not found</p>';
+          return;
+        }
 
         try {
           const res = await fetch(`${API_BASE}/api/products/${id}`);
           if (!res.ok) throw new Error("Product not found");
+
           currentProduct = await res.json();
-          displayProduct();
-          document.getElementById("loadingSpinner").classList.add("hidden");
-          document.getElementById("productContent").classList.remove("hidden");
+          document.title = `${currentProduct.name} - ZIKRIYA DARBAR`;
+
+          renderProduct();
         } catch (err) {
-          showError("Error loading product");
+          console.error(err);
+          document.getElementById("loadingSpinner").innerHTML =
+            '<p class="text-red-600 text-xl">Error loading product</p>';
         }
       }
 
-      function showError(msg) {
-        document.getElementById(
-          "loadingSpinner"
-        ).innerHTML = `<p class="text-red-500">${msg}</p>`;
-      }
+      function renderProduct() {
+        document.getElementById("loadingSpinner").classList.add("hidden");
+        document.getElementById("productContent").classList.remove("hidden");
 
-      function displayProduct() {
         document.getElementById("productName").textContent =
-          currentProduct.name || "N/A";
+          currentProduct.name;
+        document.getElementById("productCategory").textContent =
+          currentProduct.category || "General";
         document.getElementById("productDescription").innerHTML =
           currentProduct.description
             ? currentProduct.description.replace(/\n/g, "<br>")
@@ -437,11 +594,11 @@
       function loadCarousel() {
         const images =
           currentProduct.images && currentProduct.images.length > 0
-            ? currentProduct.images.map((img) => {
-                const s = String(img);
-                return s.startsWith("http") ? s : `${API_BASE}${s}`;
-              })
-            : ["https://placehold.co/600x400?text=No+Image"];
+            ? currentProduct.images.map((img) => getImageUrl(img))
+            : [
+                "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Crect width='500' height='500' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E",
+              ];
+
         const carousel = document.getElementById("carousel");
         const thumbs = document.getElementById("thumbsContainer");
 
@@ -450,7 +607,7 @@
             (img, i) => `
           <img src="${img}" alt="Product" class="carousel-img w-full h-full object-cover absolute inset-0" style="display: ${
               i === 0 ? "block" : "none"
-            }">
+            }; top: 0; left: 0;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22500%22 height=%22500%22%3E%3Crect width=%22500%22 height=%22500%22 fill=%22%23e5e7eb%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 fill=%22%239ca3af%22%3ENo Image%3C/text%3E%3C/svg%3E';">
         `
           )
           .join("");
@@ -460,7 +617,7 @@
             (img, i) => `
           <img src="${img}" onclick="goToSlide(${i})" class="w-16 h-16 object-cover rounded cursor-pointer border-2 ${
               i === 0 ? "border-blue-500" : "border-gray-200"
-            }">
+            }" onerror="this.style.backgroundColor='#e5e7eb';">
         `
           )
           .join("");
@@ -508,7 +665,6 @@
           .classList.toggle("hidden", qty < currentProduct.stock);
       }
 
-      // Buy Now - Clean total (no extra charges)
       function buyNow() {
         if (qty > currentProduct.stock) {
           alert("Insufficient stock!");
@@ -527,7 +683,6 @@
         document.getElementById("buyForm").reset();
       }
 
-      // Place Order - No delivery or GST charges
       document
         .getElementById("buyForm")
         .addEventListener("submit", async (e) => {
@@ -546,7 +701,7 @@
 
           const subtotal =
             currentProduct.price * (1 - currentProduct.discount / 100) * qty;
-          const total = subtotal; // Only product price
+          const total = subtotal;
 
           try {
             const res = await fetch(`${API_BASE}/api/orders`, {
@@ -570,7 +725,6 @@
 
             closeBuyModal();
 
-            // Show confirmation alert
             alert(
               "✅ Order Confirmed!\n\nOrder ID: #" +
                 (order._id ? order._id.slice(-6) : "N/A") +
@@ -595,7 +749,7 @@
           <p><strong>Order Confirmation</strong></p>
           <p>ID: #${order._id ? order._id.slice(-6) : "N/A"}</p>
           <p>Date: ${date}</p>
-          <table class="w-full mb-4">
+          <table class="w-full mb-4 text-sm">
             <tr><td class="p-2">Product</td><td class="p-2 text-right">${
               currentProduct.name
             }</td></tr>
@@ -604,7 +758,7 @@
               0
             )}</td></tr>
           </table>
-          <div class="text-sm text-gray-600">
+          <div class="text-sm text-gray-600 border-t pt-2">
             <p><strong>Buyer Details:</strong></p>
             <p>Name: ${buyerInfo.name || "N/A"}</p>
             <p>Phone: ${buyerInfo.phone || "N/A"}</p>
@@ -625,18 +779,8 @@
         window.print();
       }
 
-      function downloadBill() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        doc.html(document.getElementById("billContent").innerHTML, {
-          callback: (doc) => doc.save("bill.pdf"),
-          x: 10,
-          y: 10,
-        });
-      }
-
+      // Load product on page load
       loadProduct();
     </script>
-  <script src="js/navbar.js"></script>
-</body>
+  </body>
 </html>

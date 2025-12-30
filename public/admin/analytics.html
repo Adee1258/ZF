@@ -69,7 +69,7 @@
   <body
     class="bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 min-h-screen flex"
   >
-    <!-- Sidebar (same as before) -->
+    <!-- Sidebar -->
     <div
       class="sidebar text-white flex flex-col z-50 md:flex-shrink-0 w-64 fixed md:relative h-screen overflow-y-auto transition-transform duration-300 -translate-x-full md:translate-x-0"
       id="sidebar"
@@ -79,15 +79,14 @@
         <p class="text-sm opacity-90">Professional Dashboard</p>
       </div>
 
-      <!-- Admin Profile Section in Sidebar -->
       <div class="p-4 border-b border-blue-300 bg-blue-600 bg-opacity-50">
         <div class="text-center">
           <img
             id="sidebarAdminDP"
-            src="/admin-dp/logo.jpeg"
+            src="/images/logo.jpeg"
             alt="Admin"
             class="w-16 h-16 rounded-full mx-auto mb-2 border-2 border-white object-cover"
-            onerror="this.onerror=null;this.src='/images/logo.jpeg';"
+            onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2264%22 height=%2264%22%3E%3Crect width=%2264%22 height=%2264%22 fill=%22%233b82f6%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 fill=%22white%22%3EAD%3C/text%3E%3C/svg%3E';"
           />
           <p id="sidebarAdminName" class="font-semibold text-white">Admin</p>
           <p class="text-xs text-blue-100">Administrator</p>
@@ -112,7 +111,7 @@
           <li>
             <a
               href="/admin/analytics.html"
-              class="flex items-center p-3 rounded-lg hover:bg-blue-500 transition"
+              class="flex items-center p-3 rounded-lg bg-blue-500 transition"
               ><i class="fas fa-chart-bar mr-3"></i> Analytics</a
             >
           </li>
@@ -136,7 +135,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 md:ml-64 p-6 min-h-screen">
+    <div class="flex-1 md:ml-0 p-6 min-h-screen">
       <div class="flex justify-between items-center mb-8 fade-in">
         <div>
           <h1 class="text-4xl font-bold text-gray-800">Analytics Dashboard</h1>
@@ -245,170 +244,216 @@
             }),
           ]);
 
-          orders = await ordersRes.json();
-          products = await productsRes.json();
+          // Check if responses are ok
+          if (!ordersRes.ok) {
+            throw new Error(`Orders API error: ${ordersRes.status}`);
+          }
+          if (!productsRes.ok) {
+            throw new Error(`Products API error: ${productsRes.status}`);
+          }
+
+          const ordersData = await ordersRes.json();
+          const productsData = await productsRes.json();
+
+          // Check if data is array
+          orders = Array.isArray(ordersData) ? ordersData : [];
+          products = Array.isArray(productsData) ? productsData : [];
 
           updateStats();
           createProGraph();
         } catch (error) {
           console.error("Error loading data:", error);
-          alert("Failed to load analytics data. Check login or server.");
+          document.getElementById("chartLoader").innerHTML = `
+            <div class="text-center py-10">
+              <i class="fas fa-exclamation-circle text-5xl text-red-500 mb-4"></i>
+              <p class="text-xl text-gray-700 mb-2">Failed to load analytics</p>
+              <p class="text-gray-600">${error.message}</p>
+              <button onclick="loadData()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Retry
+              </button>
+            </div>
+          `;
         }
       }
 
       function updateStats() {
-        const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
-        const totalOrdersCount = orders.length;
-        const totalQty = orders.reduce((sum, o) => sum + o.qty, 0);
-        const lowStockCount = products.filter((p) => p.stock < 10).length;
+        try {
+          const totalRevenue = orders.reduce(
+            (sum, o) => sum + (o.total || 0),
+            0
+          );
+          const totalOrdersCount = orders.length;
+          const totalQty = orders.reduce((sum, o) => sum + (o.qty || 0), 0);
+          const lowStockCount = products.filter((p) => p.stock < 10).length;
 
-        document.getElementById(
-          "totalRevenue"
-        ).textContent = `Rs ${totalRevenue.toFixed(0)}`;
-        document.getElementById("totalOrdersCount").textContent =
-          totalOrdersCount;
-        document.getElementById("totalQty").textContent = totalQty;
-        document.getElementById("lowStockCount").textContent = lowStockCount;
+          document.getElementById(
+            "totalRevenue"
+          ).textContent = `Rs ${totalRevenue.toFixed(0)}`;
+          document.getElementById("totalOrdersCount").textContent =
+            totalOrdersCount;
+          document.getElementById("totalQty").textContent = totalQty;
+          document.getElementById("lowStockCount").textContent = lowStockCount;
+        } catch (err) {
+          console.error("Error updating stats:", err);
+        }
       }
 
       function createProGraph() {
-        const monthlyData = {};
-        const months = [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ];
+        try {
+          const monthlyData = {};
+          const months = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ];
 
-        months.forEach((m) => {
-          monthlyData[m] = { sales: 0, revenue: 0, orders: 0 };
-        });
+          months.forEach((m) => {
+            monthlyData[m] = { sales: 0, revenue: 0, orders: 0 };
+          });
 
-        orders.forEach((order) => {
-          const date = new Date(order.createdAt);
-          const month = months[date.getMonth()];
-          if (monthlyData[month]) {
-            monthlyData[month].sales += order.qty;
-            monthlyData[month].revenue += order.total;
-            monthlyData[month].orders += 1;
-          }
-        });
+          orders.forEach((order) => {
+            try {
+              const date = new Date(order.createdAt);
+              const month = months[date.getMonth()];
+              if (monthlyData[month]) {
+                monthlyData[month].sales += order.qty || 0;
+                monthlyData[month].revenue += order.total || 0;
+                monthlyData[month].orders += 1;
+              }
+            } catch (e) {
+              console.warn("Error processing order:", order, e);
+            }
+          });
 
-        const labels = months;
-        const salesData = months.map((m) => monthlyData[m].sales);
-        const revenueData = months.map((m) => monthlyData[m].revenue);
-        const ordersData = months.map((m) => monthlyData[m].orders);
-        const alertsData = months.map(() => Math.floor(Math.random() * 5)); // Fake alerts for demo
+          const labels = months;
+          const salesData = months.map((m) => monthlyData[m].sales);
+          const revenueData = months.map((m) => monthlyData[m].revenue);
+          const ordersData = months.map((m) => monthlyData[m].orders);
+          const alertsData = months.map(() => Math.floor(Math.random() * 5));
 
-        const ctx = document.getElementById("proChart").getContext("2d");
+          const ctx = document.getElementById("proChart").getContext("2d");
 
-        if (chart) chart.destroy();
+          if (chart) chart.destroy();
 
-        chart = new Chart(ctx, {
-          type: "bar",
-          data: {
-            labels: labels,
-            datasets: [
-              {
-                label: "Products Sold",
-                data: salesData,
-                backgroundColor: "#10b981",
-                yAxisID: "y-sales",
-              },
-              {
-                label: "Revenue (Rs)",
-                data: revenueData,
-                backgroundColor: "#3b82f6",
-                yAxisID: "y-revenue",
-              },
-              {
-                label: "Orders",
-                data: ordersData,
-                type: "line",
-                borderColor: "#f59e0b",
-                yAxisID: "y-alerts",
-                tension: 0.4,
-              },
-              {
-                label: "Stock Alerts",
-                data: alertsData,
-                type: "line",
-                borderColor: "#ef4444",
-                yAxisID: "y-alerts",
-                tension: 0.4,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            interaction: { mode: "index", intersect: false },
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: function (context) {
-                    let label = context.dataset.label || "";
-                    if (label) label += ": ";
-                    label +=
-                      context.parsed.y.toLocaleString() +
-                      (label.includes("Rs") ? " Rs" : "");
-                    return label;
+          chart = new Chart(ctx, {
+            type: "bar",
+            data: {
+              labels: labels,
+              datasets: [
+                {
+                  label: "Products Sold",
+                  data: salesData,
+                  backgroundColor: "#10b981",
+                  yAxisID: "y-sales",
+                },
+                {
+                  label: "Revenue (Rs)",
+                  data: revenueData,
+                  backgroundColor: "#3b82f6",
+                  yAxisID: "y-revenue",
+                },
+                {
+                  label: "Orders",
+                  data: ordersData,
+                  type: "line",
+                  borderColor: "#f59e0b",
+                  yAxisID: "y-alerts",
+                  tension: 0.4,
+                },
+                {
+                  label: "Stock Alerts",
+                  data: alertsData,
+                  type: "line",
+                  borderColor: "#ef4444",
+                  yAxisID: "y-alerts",
+                  tension: 0.4,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              interaction: { mode: "index", intersect: false },
+              plugins: {
+                legend: { display: true },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      let label = context.dataset.label || "";
+                      if (label) label += ": ";
+                      label +=
+                        context.parsed.y.toLocaleString() +
+                        (label.includes("Rs") ? " Rs" : "");
+                      return label;
+                    },
                   },
                 },
               },
+              scales: {
+                x: { title: { display: true, text: "Months" } },
+                "y-sales": {
+                  position: "left",
+                  title: { display: true, text: "Products Sold" },
+                },
+                "y-revenue": {
+                  position: "right",
+                  title: { display: true, text: "Revenue (Rs)" },
+                  grid: { drawOnChartArea: false },
+                },
+                "y-alerts": {
+                  position: "right",
+                  title: { display: true, text: "Orders / Alerts" },
+                  grid: { drawOnChartArea: false },
+                },
+              },
+              animation: { duration: 2000, easing: "easeInOutQuart" },
             },
-            scales: {
-              x: { title: { display: true, text: "Months" } },
-              "y-sales": {
-                position: "left",
-                title: { display: true, text: "Products Sold" },
-              },
-              "y-revenue": {
-                position: "right",
-                title: { display: true, text: "Revenue (Rs)" },
-                grid: { drawOnChartArea: false },
-              },
-              "y-alerts": {
-                position: "right",
-                title: { display: true, text: "Orders / Alerts" },
-                grid: { drawOnChartArea: false },
-              },
-            },
-            animation: { duration: 2000, easing: "easeInOutQuart" },
-          },
-        });
+          });
 
-        document.getElementById("chartLoader").classList.add("hidden");
-        document.getElementById("chartContainer").classList.remove("hidden");
+          document.getElementById("chartLoader").classList.add("hidden");
+          document.getElementById("chartContainer").classList.remove("hidden");
+        } catch (err) {
+          console.error("Error creating graph:", err);
+          document.getElementById("chartLoader").innerHTML = `
+            <div class="text-center py-10">
+              <p class="text-red-600">Error creating chart: ${err.message}</p>
+            </div>
+          `;
+        }
       }
 
       function exportReport() {
-        if (chart) {
-          const link = document.createElement("a");
-          link.download = "ZIKRIYA-DARBAR-analytics.png";
-          link.href = chart.toBase64Image();
-          link.click();
+        try {
+          if (chart) {
+            const link = document.createElement("a");
+            link.download = "ZIKRIYA-DARBAR-analytics.png";
+            link.href = chart.toBase64Image();
+            link.click();
+          }
+        } catch (err) {
+          alert("Error exporting: " + err.message);
         }
       }
 
       function toggleZoom() {
-        isZoomed = !isZoomed;
-        chart.options.scales.x.min = isZoomed ? 6 : undefined; // Last 6 months zoom
-        chart.options.scales.x.max = isZoomed ? 11 : undefined;
-        chart.update();
-      }
-
-      function toggleSidebar() {
-        document
-          .getElementById("sidebar")
-          .classList.toggle("-translate-x-full");
+        try {
+          if (chart) {
+            isZoomed = !isZoomed;
+            chart.options.scales.x.min = isZoomed ? 6 : undefined;
+            chart.options.scales.x.max = isZoomed ? 11 : undefined;
+            chart.update();
+          }
+        } catch (err) {
+          console.error("Error toggling zoom:", err);
+        }
       }
 
       function logout() {
@@ -418,38 +463,7 @@
         }
       }
 
-      // Load Admin Profile for Sidebar
-      async function loadAdminProfile() {
-        try {
-          const res = await fetch(`${API_BASE}/api/admin/profile`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-
-          if (!res.ok) {
-            console.log("Could not load admin profile");
-            return;
-          }
-
-          const data = await res.json();
-          console.log("Admin profile loaded:", data);
-
-          // Update sidebar with admin info
-          if (data.username) {
-            document.getElementById("sidebarAdminName").textContent =
-              data.username;
-          }
-
-          if (data.dp) {
-            const dpUrl = `${API_BASE}${data.dp}?t=${new Date().getTime()}`;
-            document.getElementById("sidebarAdminDP").src = dpUrl;
-          }
-        } catch (error) {
-          console.error("Error loading admin profile:", error);
-        }
-      }
-
       // Load on start
-      loadAdminProfile();
       loadData();
     </script>
   </body>

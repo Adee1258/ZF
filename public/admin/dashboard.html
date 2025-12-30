@@ -665,12 +665,14 @@
       // Display Messages
       function displayMessages(messages) {
         const tbody = document.getElementById("messagesTable");
-        if (messages.length === 0) {
+
+        if (!messages || !Array.isArray(messages) || messages.length === 0) {
           if (document.getElementById("noMessagesMsg"))
             document.getElementById("noMessagesMsg").classList.remove("hidden");
           tbody.innerHTML = "";
           return;
         }
+
         if (document.getElementById("noMessagesMsg"))
           document.getElementById("noMessagesMsg").classList.add("hidden");
 
@@ -680,13 +682,13 @@
           .map(
             (m) => `
       <tr class="message-row">
-        <td class="px-6 py-4 text-sm font-medium">${m.name}</td>
-        <td class="px-6 py-4 text-sm">${m.phone}</td>
+        <td class="px-6 py-4 text-sm font-medium">${m.name || "N/A"}</td>
+        <td class="px-6 py-4 text-sm">${m.phone || "N/A"}</td>
         <td class="px-6 py-4 text-sm">${m.email || "-"}</td>
-        <td class="px-6 py-4 text-sm max-w-xs truncate">${m.message}</td>
-        <td class="px-6 py-4 text-sm text-gray-500">${new Date(
-          m.createdAt
-        ).toLocaleString()}</td>
+        <td class="px-6 py-4 text-sm max-w-xs truncate">${m.message || "-"}</td>
+        <td class="px-6 py-4 text-sm text-gray-500">${
+          m.createdAt ? new Date(m.createdAt).toLocaleString() : "-"
+        }</td>
         <td class="px-6 py-4 text-sm">
           <button onclick="deleteMessage('${
             m._id
@@ -698,17 +700,40 @@
           .join("");
       }
 
+      // Delete Message
+      async function deleteMessage(id) {
+        if (!confirm("Delete this message?")) return;
+        try {
+          const res = await fetch(`${API_BASE}/api/admin/contact/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) throw new Error("Delete failed");
+          loadContactMessages();
+          showToast("Message deleted");
+        } catch (error) {
+          showToast("Delete error", "error");
+        }
+      }
+
       // Display Orders
       function displayOrders(orders) {
         const tbody = document.getElementById("ordersTable");
+
+        if (!orders || !Array.isArray(orders) || orders.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-gray-500">No orders yet</td></tr>`;
+          return;
+        }
+
         tbody.innerHTML = orders
           .slice(0, 10)
           .map((order) => {
             const product = allProducts.find((p) => p._id === order.productId);
-            const statusClass = `status-${order.status.toLowerCase()}`;
+            const statusClass = `status-${(
+              order.status || "pending"
+            ).toLowerCase()}`;
             const isPending = order.status === "Pending";
 
-            // Get product image - handle all cases
             let productImageHtml = `<div class="w-12 h-12 bg-gray-300 rounded mr-2 flex items-center justify-center text-xs text-gray-600 font-medium">No Img</div>`;
             if (
               product &&
@@ -724,24 +749,26 @@
         <tr class="order-row ${
           isPending ? "bg-yellow-50" : ""
         }" onclick="showOrderDetails('${order._id}')">
-          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#${order._id.slice(
-            -6
-          )}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#${(
+            order._id || "N/A"
+          ).slice(-6)}</td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${
-            order.buyer.name
-          } <br><small class="text-gray-400">${order.buyer.phone}</small></td>
+            (order.buyer && order.buyer.name) || "Unknown"
+          } <br><small class="text-gray-400">${
+              (order.buyer && order.buyer.phone) || "-"
+            }</small></td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex items-center">
             ${productImageHtml}
-            ${order.productName}
+            ${order.productName || "N/A"}
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${
-            order.qty
+            order.qty || 0
           }</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">Rs ${order.total.toFixed(
-            0
-          )}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">Rs ${(
+            order.total || 0
+          ).toFixed(0)}</td>
           <td class="px-6 py-4 whitespace-nowrap"><span class="status-badge ${statusClass}">${
-              order.status
+              order.status || "Pending"
             }</span></td>
           <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
             <button type="button" onclick="updateStatus('${
@@ -751,9 +778,11 @@
               order._id
             }', 'Rejected', event); return false;" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-semibold">Reject</button>
           </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${
             order.createdAt
-          ).toLocaleDateString()}</td>
+              ? new Date(order.createdAt).toLocaleDateString()
+              : "-"
+          }</td>
         </tr>
       `;
           })
