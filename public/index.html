@@ -165,7 +165,11 @@
           </div>
 
           <div class="md:hidden flex items-center space-x-4 pr-4">
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <button
+              onclick="toggleMobileMenu()"
+              class="mobile-menu-btn"
+              id="mobileMenuBtn"
+            >
               <i class="fas fa-bars text-2xl text-gray-700"></i>
             </button>
           </div>
@@ -174,27 +178,31 @@
         <!-- Mobile Menu -->
         <div
           id="mobileMenu"
-          class="hidden md:hidden absolute top-full left-0 w-full bg-white backdrop-blur-lg shadow-2xl border-t-2 border-orange-200"
+          class="hidden md:hidden absolute top-full left-0 w-full bg-white/98 backdrop-blur-lg shadow-2xl"
         >
-          <div class="flex flex-col items-center py-8 space-y-6 bg-white">
+          <div class="flex flex-col items-center py-8 space-y-6">
             <a
               href="#home"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
+              onclick="closeMobileMenu()"
               >Home</a
             >
             <a
               href="#products"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
+              onclick="closeMobileMenu()"
               >Products</a
             >
             <a
               href="/About.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
+              onclick="closeMobileMenu()"
               >About Us</a
             >
             <a
               href="/contact.html"
               class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
+              onclick="closeMobileMenu()"
               >Contact Us</a
             >
           </div>
@@ -209,59 +217,58 @@
     >
       <div class="text-center px-4">
         <h1 class="text-5xl md:text-7xl font-bold text-white mb-6">
-          Premium <span class="text-orange-400">Spices</span> & Fresh
-          <span class="text-orange-400">Seafood</span>
+          Welcome to <br /><span class="text-orange-400"
+            >ZIKRIYA DARBAR FOOD PRODUCTS</span
+          >
         </h1>
-        <p class="text-2xl md:text-3xl mb-12 max-w-3xl mx-auto leading-relaxed">
-          Wholesale Quality. Authentic Taste. Direct from Source.
+        <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
+          Fresh, authentic spices and seafood for your shop – delivered fast
+          across Pakistan. B2B only, wholesale prices!
         </p>
         <button
-          class="bg-gradient-to-r from-red-600 to-orange-600 text-white px-12 py-5 rounded-full text-xl font-bold hover:from-red-700 hover:to-orange-700 shadow-2xl transform hover:scale-105 transition-all duration-300"
+          onclick="scrollToProducts()"
+          class="bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-full text-lg font-semibold transition shadow-lg hover:shadow-xl"
         >
-          Explore Products <i class="fas fa-arrow-down ml-3"></i>
+          Shop Now
         </button>
       </div>
     </section>
 
     <!-- Products Section -->
-    <section id="products" class="py-20 bg-gray-50 dark:bg-gray-800">
-      <div class="container mx-auto px-6">
+    <section id="products" class="py-20 bg-white dark:bg-gray-800">
+      <div class="container mx-auto px-4">
         <h2
-          class="text-5xl font-bold text-center mb-4 text-gray-800 dark:text-white"
+          class="text-4xl font-bold text-center mb-12 text-gray-800 dark:text-white"
         >
           Our Fresh Products
         </h2>
-        <p class="text-center text-gray-600 dark:text-gray-300 text-xl mb-12">
-          Premium quality spices and seafood for your business
-        </p>
-
-        <!-- Search & Filter -->
-        <div class="flex flex-col md:flex-row gap-4 mb-12 max-w-4xl mx-auto">
+        <div
+          class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4"
+        >
           <input
-            type="text"
             id="search"
+            type="text"
             placeholder="Search products..."
-            class="flex-1 px-6 py-4 rounded-2xl border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-orange-500 text-lg"
+            class="flex-1 p-3 border-2 border-gray-300 rounded-lg focus:border-orange-600 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+            oninput="loadProducts()"
           />
           <select
             id="categoryFilter"
-            class="px-6 py-4 rounded-2xl border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-orange-500 text-lg"
+            class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-600 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+            onchange="loadProducts()"
           >
             <option value="">All Categories</option>
-            <option value="Spices">Spices</option>
-            <option value="Fish">Fish</option>
-            <option value="Seafood">Seafood</option>
+            <option value="Mirch">Mirch</option>
+            <option value="Dhaniya">Dhaniya</option>
+            <option value="Haldi">Haldi</option>
           </select>
         </div>
 
-        <!-- Products Grid -->
         <div
           id="productsGrid"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          <p class="col-span-full text-center py-12 text-xl text-gray-500">
-            Loading products...
-          </p>
+          <!-- Products will load here -->
         </div>
       </div>
     </section>
@@ -271,8 +278,8 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-4 gap-8">
           <div>
-            <h3 class="text-lg font-bold mb-4 flex items-center">
-              ZIKRIYA DARBAR FOOD PRODUCTS
+            <h3 class="text-lg font-bold mb-4">
+              <span class="text-orange-400">ZIKRIYA DARBAR</span> FOOD PRODUCTS
             </h3>
             <p class="text-gray-400">
               Premium spices & fish for B2B. Fresh, authentic, delivered fast.
@@ -281,11 +288,9 @@
           <div>
             <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
             <ul class="space-y-2 text-gray-400">
+              <li><a href="/" class="hover:text-white transition">Home</a></li>
               <li>
-                <a href="#home" class="hover:text-white transition">Home</a>
-              </li>
-              <li>
-                <a href="#products" class="hover:text-white transition"
+                <a href="/#products" class="hover:text-white transition"
                   >Products</a
                 >
               </li>
@@ -383,6 +388,38 @@
           secretClickCount = 0;
         }
       }
+
+      // Mobile Menu Functions - FIXED
+      function toggleMobileMenu() {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+        menu.classList.toggle("hidden");
+
+        if (menu.classList.contains("hidden")) {
+          btn.innerHTML = '<i class="fas fa-bars text-2xl text-gray-700"></i>';
+        } else {
+          btn.innerHTML = '<i class="fas fa-times text-2xl text-gray-700"></i>';
+        }
+      }
+
+      function closeMobileMenu() {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+        menu.classList.add("hidden");
+        btn.innerHTML = '<i class="fas fa-bars text-2xl text-gray-700"></i>';
+      }
+
+      // Close menu when clicking outside
+      document.addEventListener("click", function (e) {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+
+        if (!menu.contains(e.target) && !btn.contains(e.target)) {
+          if (!menu.classList.contains("hidden")) {
+            closeMobileMenu();
+          }
+        }
+      });
 
       function goToDetails(id) {
         window.location.href = `/product-details.html?id=${id}`;
@@ -551,19 +588,8 @@
           .scrollIntoView({ behavior: "smooth" });
       }
 
-      // Initialize on page load
-      window.addEventListener("DOMContentLoaded", () => {
-        loadProducts();
-      });
-
-      // Search and filter listeners
-      document.getElementById("search").addEventListener("input", loadProducts);
-      document
-        .getElementById("categoryFilter")
-        .addEventListener("change", loadProducts);
+      // Load products on page load
+      loadProducts();
     </script>
-
-    <!-- Load navbar script -->
-    <script src="js/navbar.js"></script>
   </body>
 </html>
