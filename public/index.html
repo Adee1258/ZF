@@ -81,6 +81,7 @@
         justify-content: center;
       }
 
+      /* MOBILE MENU FIXES */
       .mobile-menu-btn {
         background: transparent;
         border: none;
@@ -89,21 +90,92 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 60;
+        position: relative;
       }
 
       .mobile-menu-btn:hover {
-        background: rgba(0, 0, 0, 0.1);
+        background: rgba(249, 115, 22, 0.2);
         border-radius: 4px;
       }
 
+      /* Mobile Menu - Slide from top with smooth animation */
       #mobileMenu {
-        transition: max-height 0.3s ease-in-out;
-        max-height: 0;
-        overflow: hidden;
+        display: none;
+        position: fixed;
+        top: 80px;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #ff6b35 0%, #f97316 100%);
+        backdrop-filter: blur(10px);
+        animation: slideDown 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 50;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
       }
 
-      #mobileMenu:not(.hidden) {
-        max-height: 500px;
+      #mobileMenu.active {
+        display: block;
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+      }
+
+      #mobileMenu.closing {
+        animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      }
+
+      /* Menu Items Styling */
+      #mobileMenu a,
+      #mobileMenu button {
+        color: white !important;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        padding: 15px 20px;
+        display: block;
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      #mobileMenu a:hover,
+      #mobileMenu button:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateX(5px);
+      }
+
+      #mobileMenu a:active,
+      #mobileMenu button:active {
+        background: rgba(255, 255, 255, 0.25);
+      }
+
+      /* Icon Color */
+      .mobile-menu-btn i {
+        color: #f97316;
+        transition: all 0.3s ease;
+      }
+
+      .mobile-menu-btn:hover i {
+        color: #ea580c;
       }
     </style>
   </head>
@@ -159,48 +231,48 @@
             </a>
           </div>
 
+          <!-- Mobile Menu Button -->
           <div class="md:hidden flex items-center space-x-4 pr-4">
             <button
-              onclick="toggleMobileMenu()"
-              class="mobile-menu-btn"
               id="mobileMenuBtn"
+              class="mobile-menu-btn"
+              onclick="toggleMobileMenu()"
             >
-              <i class="fas fa-bars text-2xl text-gray-700"></i>
+              <i class="fas fa-bars text-3xl"></i>
             </button>
           </div>
         </div>
 
         <!-- Mobile Menu -->
-        <div
-          id="mobileMenu"
-          class="hidden md:hidden absolute top-full left-0 w-full bg-white/98 backdrop-blur-lg shadow-2xl"
-        >
-          <div class="flex flex-col items-center py-8 space-y-6">
-            <a
-              href="#home"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="closeMobileMenu()"
-              >Home</a
-            >
-            <a
-              href="#products"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="closeMobileMenu()"
-              >Products</a
-            >
-            <a
-              href="/About.html"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="closeMobileMenu()"
-              >About Us</a
-            >
-            <a
-              href="/contact.html"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="closeMobileMenu()"
-              >Contact Us</a
-            >
-          </div>
+        <div id="mobileMenu" class="md:hidden">
+          <a
+            href="#home"
+            class="text-xl font-medium transition"
+            onclick="closeMobileMenu()"
+          >
+            Home
+          </a>
+          <a
+            href="#products"
+            class="text-xl font-medium transition"
+            onclick="closeMobileMenu()"
+          >
+            Products
+          </a>
+          <a
+            href="/About.html"
+            class="text-xl font-medium transition"
+            onclick="closeMobileMenu()"
+          >
+            About Us
+          </a>
+          <a
+            href="/contact.html"
+            class="text-xl font-medium transition"
+            onclick="closeMobileMenu()"
+          >
+            Contact Us
+          </a>
         </div>
       </div>
     </nav>
@@ -362,6 +434,7 @@
       let products = [];
       let secretClickCount = 0;
       let secretClickTimer = null;
+      let menuOpen = false;
 
       const fallbackProducts = [
         {
@@ -477,6 +550,63 @@
         },
       ];
 
+      // MOBILE MENU - COMPLETELY FIXED
+      function toggleMobileMenu() {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+
+        if (!menu || !btn) return;
+
+        menuOpen = !menuOpen;
+
+        if (menuOpen) {
+          menu.classList.remove("closing");
+          menu.classList.add("active");
+          btn.innerHTML = '<i class="fas fa-times text-3xl"></i>';
+        } else {
+          menu.classList.add("closing");
+          setTimeout(() => {
+            menu.classList.remove("active");
+            menu.classList.remove("closing");
+            btn.innerHTML = '<i class="fas fa-bars text-3xl"></i>';
+          }, 300);
+        }
+      }
+
+      function closeMobileMenu() {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+
+        if (!menu || !btn || !menuOpen) return;
+
+        menuOpen = false;
+        menu.classList.add("closing");
+        setTimeout(() => {
+          menu.classList.remove("active");
+          menu.classList.remove("closing");
+          btn.innerHTML = '<i class="fas fa-bars text-3xl"></i>';
+        }, 300);
+      }
+
+      // Close menu when clicking outside
+      document.addEventListener("click", function (e) {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("mobileMenuBtn");
+
+        if (!menu || !btn) return;
+
+        if (!menu.contains(e.target) && !btn.contains(e.target) && menuOpen) {
+          closeMobileMenu();
+        }
+      });
+
+      // Close menu on scroll
+      window.addEventListener("scroll", function () {
+        if (menuOpen) {
+          closeMobileMenu();
+        }
+      });
+
       function handleSecretAdminAccess() {
         secretClickCount++;
         const logo = document.getElementById("secretAdminLogo");
@@ -502,36 +632,6 @@
           secretClickCount = 0;
         }
       }
-
-      function toggleMobileMenu() {
-        const menu = document.getElementById("mobileMenu");
-        const btn = document.getElementById("mobileMenuBtn");
-        menu.classList.toggle("hidden");
-
-        if (menu.classList.contains("hidden")) {
-          btn.innerHTML = '<i class="fas fa-bars text-2xl text-gray-700"></i>';
-        } else {
-          btn.innerHTML = '<i class="fas fa-times text-2xl text-gray-700"></i>';
-        }
-      }
-
-      function closeMobileMenu() {
-        const menu = document.getElementById("mobileMenu");
-        const btn = document.getElementById("mobileMenuBtn");
-        menu.classList.add("hidden");
-        btn.innerHTML = '<i class="fas fa-bars text-2xl text-gray-700"></i>';
-      }
-
-      document.addEventListener("click", function (e) {
-        const menu = document.getElementById("mobileMenu");
-        const btn = document.getElementById("mobileMenuBtn");
-
-        if (!menu.contains(e.target) && !btn.contains(e.target)) {
-          if (!menu.classList.contains("hidden")) {
-            closeMobileMenu();
-          }
-        }
-      });
 
       function goToDetails(id) {
         window.location.href = `/product-details.html?id=${id}`;
