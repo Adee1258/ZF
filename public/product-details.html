@@ -230,7 +230,6 @@
           <button
             id="mobileMenuBtn"
             class="md:hidden mobile-menu-btn mr-4"
-            onclick="toggleMobileMenu()"
             aria-label="Toggle Menu"
           >
             <i class="fas fa-bars text-3xl"></i>
@@ -240,10 +239,10 @@
 
       <!-- Mobile Menu -->
       <div id="mobileMenu" class="md:hidden">
-        <a href="index.html" onclick="closeMobileMenu()">Home</a>
-        <a href="index.html#products" onclick="closeMobileMenu()">Products</a>
-        <a href="About.html" onclick="closeMobileMenu()">About Us</a>
-        <a href="contact.html" onclick="closeMobileMenu()">Contact Us</a>
+        <a href="index.html">Home</a>
+        <a href="index.html#products">Products</a>
+        <a href="About.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
       </div>
     </nav>
 
@@ -519,8 +518,12 @@
       let qty = 1;
       let menuOpen = false;
 
-      // Mobile Menu Functions
-      function toggleMobileMenu() {
+      // Mobile Menu Functions - FIXED
+      function toggleMobileMenu(event) {
+        if (event) {
+          event.stopPropagation();
+        }
+
         const menu = document.getElementById("mobileMenu");
         const btn = document.getElementById("mobileMenuBtn");
 
@@ -557,26 +560,47 @@
         }, 300);
       }
 
-      // Close menu when clicking outside
-      document.addEventListener("click", function (e) {
-        const menu = document.getElementById("mobileMenu");
-        const btn = document.getElementById("mobileMenuBtn");
-        const navbar = document.querySelector("nav");
+      // Setup mobile menu with proper event handling
+      document.addEventListener("DOMContentLoaded", function () {
+        const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+        const mobileMenu = document.getElementById("mobileMenu");
 
-        if (!menu || !btn || !navbar) return;
-
-        if (btn.contains(e.target) || navbar.contains(e.target)) return;
-
-        if (!menu.contains(e.target) && menuOpen) {
-          closeMobileMenu();
+        if (mobileMenuBtn) {
+          mobileMenuBtn.addEventListener("click", toggleMobileMenu);
         }
-      });
 
-      // Close menu on scroll
-      window.addEventListener("scroll", function () {
-        if (menuOpen) {
-          closeMobileMenu();
+        // Close menu when clicking on menu links
+        if (mobileMenu) {
+          const menuLinks = mobileMenu.querySelectorAll("a");
+          menuLinks.forEach((link) => {
+            link.addEventListener("click", closeMobileMenu);
+          });
         }
+
+        // Close menu when clicking outside - but not immediately
+        document.addEventListener("click", function (e) {
+          if (!mobileMenu || !mobileMenuBtn) return;
+
+          // Check if click is outside both menu and button
+          if (
+            !mobileMenu.contains(e.target) &&
+            !mobileMenuBtn.contains(e.target) &&
+            menuOpen
+          ) {
+            closeMobileMenu();
+          }
+        });
+
+        // Close menu on scroll
+        let scrollTimeout;
+        window.addEventListener("scroll", function () {
+          if (menuOpen) {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+              closeMobileMenu();
+            }, 100);
+          }
+        });
       });
 
       // Get image URL with proper fallback
