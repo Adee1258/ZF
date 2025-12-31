@@ -19,10 +19,6 @@
       tailwind.config = {
         theme: { extend: { fontFamily: { sans: ["Poppins", "sans-serif"] } } },
       };
-
-      const API_BASE = location.hostname.includes("zdspices.pk")
-        ? "https://api.zdspices.pk"
-        : `http://${location.hostname}:5000`;
     </script>
     <style>
       body {
@@ -89,7 +85,7 @@
         }
       }
 
-      /* Mobile menu button fix */
+      /* MOBILE MENU FIXES */
       .mobile-menu-btn {
         background: transparent;
         border: none;
@@ -98,22 +94,92 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 60;
+        position: relative;
       }
 
       .mobile-menu-btn:hover {
-        background: rgba(0, 0, 0, 0.1);
+        background: rgba(249, 115, 22, 0.2);
         border-radius: 4px;
       }
 
-      /* Mobile menu smooth */
+      /* Mobile Menu - Slide from top with smooth animation */
       #mobileMenu {
-        transition: max-height 0.3s ease-in-out;
-        max-height: 0;
-        overflow: hidden;
+        display: none;
+        position: fixed;
+        top: 80px;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #ff6b35 0%, #f97316 100%);
+        backdrop-filter: blur(10px);
+        animation: slideDown 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 50;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
       }
 
-      #mobileMenu:not(.hidden) {
-        max-height: 500px;
+      #mobileMenu.active {
+        display: block;
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+      }
+
+      #mobileMenu.closing {
+        animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      }
+
+      /* Menu Items Styling */
+      #mobileMenu a,
+      #mobileMenu button {
+        color: white !important;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        padding: 15px 20px;
+        display: block;
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      #mobileMenu a:hover,
+      #mobileMenu button:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateX(5px);
+      }
+
+      #mobileMenu a:active,
+      #mobileMenu button:active {
+        background: rgba(255, 255, 255, 0.25);
+      }
+
+      /* Icon Color */
+      .mobile-menu-btn i {
+        color: #f97316;
+        transition: all 0.3s ease;
+      }
+
+      .mobile-menu-btn:hover i {
+        color: #ea580c;
       }
     </style>
   </head>
@@ -159,285 +225,212 @@
               >Contact Us</a
             >
           </div>
-          <div class="md:hidden flex items-center space-x-4 pr-4">
-            <button
-              onclick="toggleMobileMenu()"
-              class="mobile-menu-btn"
-              id="mobileMenuBtn"
-            >
-              <i class="fas fa-bars text-2xl text-gray-700"></i>
-            </button>
-          </div>
+
+          <!-- Mobile Menu Button -->
+          <button
+            id="mobileMenuBtn"
+            class="md:hidden mobile-menu-btn mr-4"
+            onclick="toggleMobileMenu()"
+            aria-label="Toggle Menu"
+          >
+            <i class="fas fa-bars text-3xl"></i>
+          </button>
         </div>
-        <div
-          id="mobileMenu"
-          class="hidden md:hidden absolute top-full left-0 w-full bg-white/98 backdrop-blur-lg shadow-2xl"
-        >
-          <div class="flex flex-col items-center py-8 space-y-6">
-            <a
-              href="index.html"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="closeMobileMenu()"
-              >Home</a
-            >
-            <a
-              href="index.html#products"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="closeMobileMenu()"
-              >Products</a
-            >
-            <a
-              href="About.html"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="closeMobileMenu()"
-              >About Us</a
-            >
-            <a
-              href="contact.html"
-              class="text-xl font-medium text-gray-700 hover:text-orange-600 transition"
-              onclick="closeMobileMenu()"
-              >Contact Us</a
-            >
-          </div>
-        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobileMenu" class="md:hidden">
+        <a href="index.html" onclick="closeMobileMenu()">Home</a>
+        <a href="index.html#products" onclick="closeMobileMenu()">Products</a>
+        <a href="About.html" onclick="closeMobileMenu()">About Us</a>
+        <a href="contact.html" onclick="closeMobileMenu()">Contact Us</a>
       </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="pt-28 pb-20">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div id="loadingSpinner" class="text-center py-10">
-          <i
-            class="fas fa-spinner loading-spinner text-3xl text-blue-500 mb-2"
-          ></i>
-          <p class="text-gray-600">Loading product details...</p>
-        </div>
-        <div id="productContent" class="hidden grid md:grid-cols-2 gap-8 mb-8">
-          <!-- Carousel -->
-          <div
-            class="product-image-section relative rounded-xl overflow-hidden shadow-xl"
-          >
-            <div id="carousel" class="carousel-container"></div>
-            <div
-              id="thumbsContainer"
-              class="flex justify-center mt-4 space-x-2 flex-wrap"
-            ></div>
-            <button
-              onclick="prevSlide()"
-              class="absolute left-2 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100 z-10"
-            >
-              <i class="fas fa-chevron-left"></i>
-            </button>
-            <button
-              onclick="nextSlide()"
-              class="absolute right-2 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100 z-10"
-            >
-              <i class="fas fa-chevron-right"></i>
-            </button>
-          </div>
+    <div class="pt-32 pb-16 px-4 md:px-8">
+      <div id="loadingSpinner" class="flex justify-center items-center h-96">
+        <div
+          class="loading-spinner border-8 border-t-8 border-gray-200 border-t-orange-600 rounded-full w-16 h-16"
+        ></div>
+      </div>
 
-          <!-- Info -->
-          <div class="space-y-6 flex flex-col justify-center">
-            <h1 id="productName" class="text-3xl font-bold text-gray-800"></h1>
-            <p
-              id="productDescription"
-              class="text-gray-600 leading-relaxed"
-            ></p>
-            <div class="flex items-center space-x-4">
-              <span class="text-yellow-500">
-                <i class="fas fa-star"></i><i class="fas fa-star"></i
-                ><i class="fas fa-star"></i><i class="fas fa-star"></i
-                ><i class="far fa-star"></i> (4.5)
-              </span>
-              <span class="text-gray-500">12 reviews</span>
-            </div>
-            <div class="space-y-3">
-              <div class="flex items-center space-x-2">
-                <span
-                  id="productPrice"
-                  class="text-3xl font-bold text-green-600 price-animate"
-                ></span>
-                <span
-                  id="productDiscount"
-                  class="text-gray-400 line-through text-lg"
-                ></span>
-              </div>
-              <div class="bg-blue-50 p-4 rounded-lg">
-                <p class="text-sm text-gray-700 mb-2">Stock Availability</p>
-                <div class="w-full bg-gray-200 rounded-full h-3">
-                  <div
-                    id="stockBar"
-                    class="bg-gradient-to-r from-green-400 to-green-600 h-3 rounded-full stock-bar"
-                  ></div>
-                </div>
-                <p class="text-sm text-gray-600 mt-2">
-                  <span id="productStock"></span> (
-                  <span id="maxStock"></span> units available)
-                </p>
-              </div>
-            </div>
-
-            <!-- Quantity & Actions -->
-            <div class="space-y-4">
-              <div
-                class="flex items-center space-x-4 bg-gray-50 p-4 rounded-lg"
-              >
-                <span class="text-sm font-semibold text-gray-700"
-                  >Quantity:</span
-                >
-                <button
-                  id="decBtn"
-                  onclick="changeQty(-1)"
-                  class="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-                >
-                  <i class="fas fa-minus"></i>
-                </button>
-                <span
-                  id="qtyInput"
-                  class="text-lg font-bold bg-white px-6 py-2 rounded border"
-                  >1</span
-                >
-                <button
-                  id="incBtn"
-                  onclick="changeQty(1)"
-                  class="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-                >
-                  <i class="fas fa-plus"></i>
-                </button>
-              </div>
-
-              <div
-                id="stockWarning"
-                class="hidden bg-orange-50 border-l-4 border-orange-400 p-4"
-              >
-                <p class="text-orange-700 text-sm">
-                  âš ï¸ Limited stock! Only
-                  <span id="warningMaxStock"></span> units available.
-                </p>
-              </div>
-
+      <div id="productContent" class="hidden max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Left Column - Images -->
+          <div class="product-image-section">
+            <div class="carousel-container rounded-lg overflow-hidden mb-4">
+              <div id="carousel" class="relative w-full h-full"></div>
               <button
-                onclick="buyNow()"
-                class="w-full bg-gradient-to-r from-red-600 to-orange-600 text-white py-4 rounded-lg text-lg font-bold hover:from-red-700 hover:to-orange-700 transition shadow-lg"
+                onclick="changeSlide(-1)"
+                class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition"
               >
-                <i class="fas fa-shopping-cart mr-2"></i>Buy Now
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button
+                onclick="changeSlide(1)"
+                class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition"
+              >
+                <i class="fas fa-chevron-right"></i>
               </button>
             </div>
 
-            <!-- Product Details -->
+            <!-- Thumbnails -->
             <div
-              class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 space-y-2"
+              id="thumbsContainer"
+              class="flex gap-2 overflow-x-auto pb-2"
+            ></div>
+          </div>
+
+          <!-- Right Column - Details -->
+          <div class="bg-white rounded-lg shadow-lg p-6">
+            <span
+              id="productCategory"
+              class="inline-block bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-sm font-semibold mb-3"
+            ></span>
+
+            <h1
+              id="productName"
+              class="text-4xl font-bold mb-4 text-gray-800"
+            ></h1>
+
+            <div class="flex items-baseline gap-4 mb-4">
+              <span
+                id="productPrice"
+                class="text-3xl font-bold text-green-600"
+              ></span>
+              <span
+                id="productDiscount"
+                class="text-xl text-gray-400 line-through"
+              ></span>
+            </div>
+
+            <div class="flex items-center mb-4">
+              <div class="flex text-yellow-400 mr-2">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+              </div>
+              <span class="text-gray-600">(4.8/5)</span>
+            </div>
+
+            <div
+              id="productDescription"
+              class="text-gray-700 mb-6 leading-relaxed"
+            ></div>
+
+            <!-- Stock Info -->
+            <div class="mb-6">
+              <div class="flex justify-between items-center mb-2">
+                <span
+                  id="productStock"
+                  class="text-green-600 font-semibold"
+                ></span>
+                <span class="text-sm text-gray-500"
+                  ><span id="maxStock"></span> units available</span
+                >
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  id="stockBar"
+                  class="stock-bar bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Quantity Selector -->
+            <div class="flex items-center gap-4 mb-6">
+              <label class="font-semibold text-gray-700">Quantity:</label>
+              <div class="flex items-center border border-gray-300 rounded-lg">
+                <button
+                  id="minusBtn"
+                  onclick="changeQty(-1)"
+                  class="px-4 py-2 text-xl hover:bg-gray-100 transition"
+                >
+                  -
+                </button>
+                <input
+                  id="qtyInput"
+                  type="number"
+                  value="1"
+                  min="1"
+                  class="w-16 text-center border-x border-gray-300 py-2 outline-none"
+                  onchange="updateQty()"
+                />
+                <button
+                  id="plusBtn"
+                  onclick="changeQty(1)"
+                  class="px-4 py-2 text-xl hover:bg-gray-100 transition"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <button
+                onclick="addToCart()"
+                class="bg-orange-600 text-white py-3 rounded-lg font-semibold hover:bg-orange-700 transition shadow-lg"
+              >
+                <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
+              </button>
+              <button
+                onclick="buyNow()"
+                class="bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition shadow-lg"
+              >
+                <i class="fas fa-bolt mr-2"></i>Buy Now
+              </button>
+            </div>
+
+            <button
+              onclick="downloadPDF()"
+              class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition shadow-lg"
             >
-              <p>
-                <strong class="text-gray-800">Category:</strong>
-                <span id="productCategory"></span>
-              </p>
-              <p>
-                <strong class="text-gray-800">Delivery:</strong> 2-3 days
-                nationwide
-              </p>
-              <p>
-                <strong class="text-gray-800">Packaging:</strong> Freshly packed
-                & sealed
-              </p>
+              <i class="fas fa-download mr-2"></i>Download Details (PDF)
+            </button>
+
+            <!-- Product Info -->
+            <div class="mt-6 border-t pt-4">
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span class="text-gray-500">SKU:</span>
+                  <span id="productSKU" class="font-semibold ml-2"></span>
+                </div>
+                <div>
+                  <span class="text-gray-500">Category:</span>
+                  <span id="productCat2" class="font-semibold ml-2"></span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </main>
-
-    <!-- Buy Modal -->
-    <div
-      id="buyModal"
-      class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-    >
-      <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-        <h2 class="text-2xl font-bold mb-6 text-gray-800">Confirm Order</h2>
-        <form id="buyForm" class="space-y-4">
-          <input
-            type="text"
-            id="buyerName"
-            placeholder="Your Name"
-            required
-            class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500"
-          />
-          <input
-            type="tel"
-            id="buyerPhone"
-            placeholder="Phone Number (03XX-XXXXXXX)"
-            required
-            class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500"
-          />
-          <textarea
-            id="buyerAddress"
-            placeholder="Delivery Address"
-            required
-            rows="3"
-            class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500"
-          ></textarea>
-
-          <div class="bg-blue-50 p-4 rounded-lg">
-            <p class="text-sm text-gray-600">Total Amount</p>
-            <p id="totalAmount" class="text-2xl font-bold text-green-600"></p>
-          </div>
-
-          <div class="flex space-x-4">
-            <button
-              type="button"
-              onclick="closeBuyModal()"
-              class="flex-1 px-4 py-3 bg-gray-300 rounded-lg font-semibold hover:bg-gray-400 transition"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition"
-            >
-              Place Order
-            </button>
-          </div>
-        </form>
-      </div>
     </div>
 
-    <!-- Bill Modal -->
+    <!-- Toast Notification -->
     <div
-      id="billModal"
-      class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+      id="toast"
+      class="fixed top-24 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg hidden toast z-50"
     >
-      <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-        <h2 class="text-2xl font-bold mb-6 text-gray-800">
-          Order Confirmation
-        </h2>
-        <div
-          id="billContent"
-          class="space-y-4 mb-6 max-h-96 overflow-y-auto"
-        ></div>
-        <div class="flex space-x-4">
-          <button
-            onclick="closeBillModal()"
-            class="flex-1 px-4 py-3 bg-gray-300 rounded-lg font-semibold hover:bg-gray-400 transition"
-          >
-            Close
-          </button>
-          <button
-            onclick="printBill()"
-            class="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
-          >
-            <i class="fas fa-print mr-2"></i>Print
-          </button>
-        </div>
-      </div>
+      <i class="fas fa-check-circle mr-2"></i>
+      <span id="toastMessage"></span>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8 mt-20">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid md:grid-cols-4 gap-8">
+    <footer class="bg-gray-800 text-white py-12">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           <div>
-            <h3 class="text-lg font-bold mb-4">ZIKRIYA DARBAR FOOD PRODUCTS</h3>
-            <p class="text-gray-400">
-              Premium spices & fish for B2B. Fresh, authentic, delivered fast.
+            <h3 class="text-xl font-bold mb-4 text-orange-500">
+              ZIKRIYA DARBAR FOOD PRODUCTS
+            </h3>
+            <p class="text-gray-400 leading-relaxed">
+              Premium B2B spices and food products. Quality you can trust,
+              flavors you'll love.
             </p>
           </div>
           <div>
@@ -498,7 +491,7 @@
               ></a>
             </div>
             <p class="text-sm text-gray-400 mt-4">
-              Contact: 03327372364 | Email: zdspices@gmail.com
+              Contact: 03327372364 | Email: info@zdspices.pk
             </p>
           </div>
         </div>
@@ -506,47 +499,83 @@
           class="border-t border-gray-700 mt-8 pt-4 text-center text-gray-400"
         >
           <p>
-            &copy; 2025 ZIKRIYA DARBAR FOOD PRODUCTS. All rights reserved. |
-            Made with â¤ï¸ in Pakistan
+            © 2025 ZIKRIYA DARBAR FOOD PRODUCTS. All rights reserved. | Made
+            with love in Pakistan
           </p>
         </div>
       </div>
     </footer>
 
     <script>
+      // API Configuration - Auto-detect localhost or production
+      const API_BASE = window.location.hostname.includes("zdspices.pk")
+        ? "https://api.zdspices.pk"
+        : `http://${window.location.hostname}:5000`;
+
+      console.log("API Base URL:", API_BASE);
+
       let currentProduct = null;
       let currentSlide = 0;
       let qty = 1;
+      let menuOpen = false;
 
       // Mobile Menu Functions
       function toggleMobileMenu() {
         const menu = document.getElementById("mobileMenu");
         const btn = document.getElementById("mobileMenuBtn");
-        menu.classList.toggle("hidden");
 
-        if (menu.classList.contains("hidden")) {
-          btn.innerHTML = '<i class="fas fa-bars text-2xl text-gray-700"></i>';
+        if (!menu || !btn) return;
+
+        menuOpen = !menuOpen;
+
+        if (menuOpen) {
+          menu.classList.remove("closing");
+          menu.classList.add("active");
+          btn.innerHTML = '<i class="fas fa-times text-3xl"></i>';
         } else {
-          btn.innerHTML = '<i class="fas fa-times text-2xl text-gray-700"></i>';
+          menu.classList.add("closing");
+          setTimeout(() => {
+            menu.classList.remove("active");
+            menu.classList.remove("closing");
+            btn.innerHTML = '<i class="fas fa-bars text-3xl"></i>';
+          }, 300);
         }
       }
 
       function closeMobileMenu() {
         const menu = document.getElementById("mobileMenu");
         const btn = document.getElementById("mobileMenuBtn");
-        menu.classList.add("hidden");
-        btn.innerHTML = '<i class="fas fa-bars text-2xl text-gray-700"></i>';
+
+        if (!menu || !btn || !menuOpen) return;
+
+        menuOpen = false;
+        menu.classList.add("closing");
+        setTimeout(() => {
+          menu.classList.remove("active");
+          menu.classList.remove("closing");
+          btn.innerHTML = '<i class="fas fa-bars text-3xl"></i>';
+        }, 300);
       }
 
       // Close menu when clicking outside
       document.addEventListener("click", function (e) {
         const menu = document.getElementById("mobileMenu");
         const btn = document.getElementById("mobileMenuBtn");
+        const navbar = document.querySelector("nav");
 
-        if (!menu.contains(e.target) && !btn.contains(e.target)) {
-          if (!menu.classList.contains("hidden")) {
-            closeMobileMenu();
-          }
+        if (!menu || !btn || !navbar) return;
+
+        if (btn.contains(e.target) || navbar.contains(e.target)) return;
+
+        if (!menu.contains(e.target) && menuOpen) {
+          closeMobileMenu();
+        }
+      });
+
+      // Close menu on scroll
+      window.addEventListener("scroll", function () {
+        if (menuOpen) {
+          closeMobileMenu();
         }
       });
 
@@ -621,6 +650,11 @@
           stock > 0 ? "In Stock" : "Out of Stock";
         document.getElementById("maxStock").textContent = stock;
 
+        document.getElementById("productSKU").textContent =
+          currentProduct.sku || "N/A";
+        document.getElementById("productCat2").textContent =
+          currentProduct.category || "General";
+
         loadCarousel();
         updateQtyButtons();
       }
@@ -649,172 +683,134 @@
         thumbs.innerHTML = images
           .map(
             (img, i) => `
-          <img src="${img}" onclick="goToSlide(${i})" class="w-16 h-16 object-cover rounded cursor-pointer border-2 ${
-              i === 0 ? "border-blue-500" : "border-gray-200"
-            }" onerror="this.style.backgroundColor='#e5e7eb';">
+          <img src="${img}" alt="Thumbnail" 
+            class="w-20 h-20 object-cover rounded cursor-pointer border-2 ${
+              i === 0 ? "border-orange-500" : "border-gray-300"
+            } hover:border-orange-500 transition"
+            onclick="jumpToSlide(${i})"
+            onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%23e5e7eb%22/%3E%3C/svg%3E';">
         `
           )
           .join("");
       }
 
-      function goToSlide(index) {
-        document
-          .querySelectorAll("#carousel img")
-          .forEach(
-            (img, i) => (img.style.display = i === index ? "block" : "none")
-          );
-        document
-          .querySelectorAll("#thumbsContainer img")
-          .forEach((thumb, i) => {
-            thumb.classList.toggle("border-blue-500", i === index);
-            thumb.classList.toggle("border-gray-200", i !== index);
-          });
+      function changeSlide(dir) {
+        const images = document.querySelectorAll("#carousel img");
+        if (images.length === 0) return;
+
+        images[currentSlide].style.display = "none";
+        currentSlide = (currentSlide + dir + images.length) % images.length;
+        images[currentSlide].style.display = "block";
+        updateThumbnails();
+      }
+
+      function jumpToSlide(index) {
+        const images = document.querySelectorAll("#carousel img");
+        if (images.length === 0) return;
+
+        images[currentSlide].style.display = "none";
         currentSlide = index;
+        images[currentSlide].style.display = "block";
+        updateThumbnails();
       }
 
-      function prevSlide() {
-        const len = currentProduct.images ? currentProduct.images.length : 1;
-        goToSlide((currentSlide - 1 + len) % len);
+      function updateThumbnails() {
+        const thumbs = document.querySelectorAll("#thumbsContainer img");
+        thumbs.forEach((thumb, i) => {
+          thumb.classList.toggle("border-orange-500", i === currentSlide);
+          thumb.classList.toggle("border-gray-300", i !== currentSlide);
+        });
       }
 
-      function nextSlide() {
-        const len = currentProduct.images ? currentProduct.images.length : 1;
-        goToSlide((currentSlide + 1) % len);
+      function changeQty(delta) {
+        const input = document.getElementById("qtyInput");
+        const newQty = Math.max(1, parseInt(input.value || 1) + delta);
+        const stock = currentProduct?.stock || 0;
+
+        if (newQty <= stock) {
+          qty = newQty;
+          input.value = qty;
+          updateQtyButtons();
+        } else {
+          showToast("Maximum stock reached!");
+        }
       }
 
-      function changeQty(change) {
-        const newQty = qty + change;
-        if (newQty < 1 || newQty > currentProduct.stock) return;
+      function updateQty() {
+        const input = document.getElementById("qtyInput");
+        const stock = currentProduct?.stock || 0;
+        const newQty = Math.max(1, Math.min(parseInt(input.value || 1), stock));
+
         qty = newQty;
-        document.getElementById("qtyInput").textContent = qty;
+        input.value = qty;
         updateQtyButtons();
       }
 
       function updateQtyButtons() {
-        document.getElementById("incBtn").disabled =
-          qty >= currentProduct.stock;
-        document.getElementById("decBtn").disabled = qty <= 1;
-        document
-          .getElementById("stockWarning")
-          .classList.toggle("hidden", qty < currentProduct.stock);
+        const stock = currentProduct?.stock || 0;
+        document.getElementById("minusBtn").disabled = qty <= 1;
+        document.getElementById("plusBtn").disabled = qty >= stock;
+      }
+
+      function addToCart() {
+        if (!currentProduct) return;
+        showToast(`${qty} x ${currentProduct.name} added to cart!`);
       }
 
       function buyNow() {
-        if (qty > currentProduct.stock) {
-          alert("Insufficient stock!");
-          return;
+        if (!currentProduct) return;
+        showToast(`Proceeding to checkout with ${qty} items...`);
+        setTimeout(() => {
+          window.location.href = "contact.html";
+        }, 1500);
+      }
+
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        const toastMessage = document.getElementById("toastMessage");
+        toastMessage.textContent = message;
+        toast.classList.remove("hidden");
+        setTimeout(() => {
+          toast.classList.add("hidden");
+        }, 3000);
+      }
+
+      function downloadPDF() {
+        if (!currentProduct) return;
+
+        try {
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF();
+
+          doc.setFontSize(22);
+          doc.text("ZIKRIYA DARBAR FOOD PRODUCTS", 105, 20, {
+            align: "center",
+          });
+
+          doc.setFontSize(16);
+          doc.text(currentProduct.name, 20, 40);
+
+          doc.setFontSize(12);
+          doc.text(`Category: ${currentProduct.category || "N/A"}`, 20, 55);
+          doc.text(`SKU: ${currentProduct.sku || "N/A"}`, 20, 65);
+          doc.text(`Price: Rs ${currentProduct.price || 0}`, 20, 75);
+          doc.text(`Stock: ${currentProduct.stock || 0} units`, 20, 85);
+
+          doc.text("Description:", 20, 100);
+          const desc = currentProduct.description || "No description available";
+          const splitDesc = doc.splitTextToSize(desc, 170);
+          doc.text(splitDesc, 20, 110);
+
+          doc.save(`${currentProduct.name.replace(/\s+/g, "_")}_Details.pdf`);
+          showToast("PDF downloaded successfully!");
+        } catch (error) {
+          console.error("PDF Error:", error);
+          showToast("Error generating PDF");
         }
-
-        const finalPrice =
-          currentProduct.price * (1 - currentProduct.discount / 100) * qty;
-        document.getElementById("totalAmount").textContent =
-          finalPrice.toFixed(0);
-        document.getElementById("buyModal").classList.remove("hidden");
       }
 
-      function closeBuyModal() {
-        document.getElementById("buyModal").classList.add("hidden");
-        document.getElementById("buyForm").reset();
-      }
-
-      document
-        .getElementById("buyForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-
-          const buyer = {
-            name: document.getElementById("buyerName").value.trim(),
-            phone: document.getElementById("buyerPhone").value.trim(),
-            address: document.getElementById("buyerAddress").value.trim(),
-          };
-
-          if (!buyer.name || !buyer.phone || !buyer.address) {
-            alert("Please fill all fields");
-            return;
-          }
-
-          const subtotal =
-            currentProduct.price * (1 - currentProduct.discount / 100) * qty;
-          const total = subtotal;
-
-          try {
-            const res = await fetch(`${API_BASE}/api/orders`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                productId: currentProduct._id,
-                buyer,
-                qty,
-                subtotal,
-                gst: 0,
-                delivery: 0,
-                total,
-              }),
-            });
-
-            if (!res.ok) throw new Error("Order failed");
-
-            const data = await res.json();
-            const order = data.order || data;
-
-            closeBuyModal();
-
-            alert(
-              "âœ… Order Confirmed!\n\nOrder ID: #" +
-                (order._id ? order._id.slice(-6) : "N/A") +
-                "\n\nYour order has been placed successfully. You will receive it within 2-3 days."
-            );
-
-            showBill(order, total);
-            confetti({
-              particleCount: 100,
-              spread: 70,
-              origin: { y: 0.6 },
-            });
-          } catch (err) {
-            alert("âŒ Order failed: " + err.message);
-          }
-        });
-
-      function showBill(order, totalAmount) {
-        const date = new Date().toLocaleDateString("en-PK");
-        const buyerInfo = order.buyer || {};
-        const billHtml = `
-          <p><strong>Order Confirmation</strong></p>
-          <p>ID: #${order._id ? order._id.slice(-6) : "N/A"}</p>
-          <p>Date: ${date}</p>
-          <table class="w-full mb-4 text-sm">
-            <tr><td class="p-2">Product</td><td class="p-2 text-right">${
-              currentProduct.name
-            }</td></tr>
-            <tr><td class="p-2">Qty</td><td class="p-2 text-right">${qty}</td></tr>
-            <tr><td class="p-2 font-bold">Total</td><td class="p-2 text-right text-green-600">Rs ${totalAmount.toFixed(
-              0
-            )}</td></tr>
-          </table>
-          <div class="text-sm text-gray-600 border-t pt-2">
-            <p><strong>Buyer Details:</strong></p>
-            <p>Name: ${buyerInfo.name || "N/A"}</p>
-            <p>Phone: ${buyerInfo.phone || "N/A"}</p>
-            <p>Address: ${buyerInfo.address || "N/A"}</p>
-            <p style="margin-top: 10px;"><strong>Status:</strong> Pending</p>
-            <p><strong>Delivery:</strong> 2-3 days</p>
-          </div>
-        `;
-        document.getElementById("billContent").innerHTML = billHtml;
-        document.getElementById("billModal").classList.remove("hidden");
-      }
-
-      function closeBillModal() {
-        document.getElementById("billModal").classList.add("hidden");
-      }
-
-      function printBill() {
-        window.print();
-      }
-
-      // Load product on page load
-      loadProduct();
+      // Initialize
+      window.addEventListener("DOMContentLoaded", loadProduct);
     </script>
   </body>
 </html>

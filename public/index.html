@@ -232,100 +232,71 @@
           </div>
 
           <!-- Mobile Menu Button -->
-          <div class="md:hidden flex items-center space-x-4 pr-4">
-            <button
-              id="mobileMenuBtn"
-              class="mobile-menu-btn"
-              onclick="event.stopPropagation(); toggleMobileMenu();"
-            >
-              <i class="fas fa-bars text-3xl"></i>
-            </button>
-          </div>
+          <button
+            id="mobileMenuBtn"
+            class="md:hidden mobile-menu-btn mr-4"
+            onclick="toggleMobileMenu()"
+            aria-label="Toggle Menu"
+          >
+            <i class="fas fa-bars text-3xl"></i>
+          </button>
         </div>
+      </div>
 
-        <!-- Mobile Menu -->
-        <div
-          id="mobileMenu"
-          class="md:hidden"
-          onclick="event.stopPropagation();"
-        >
-          <a
-            href="#home"
-            class="text-xl font-medium transition"
-            onclick="closeMobileMenu(); event.stopPropagation();"
-          >
-            Home
-          </a>
-          <a
-            href="#products"
-            class="text-xl font-medium transition"
-            onclick="closeMobileMenu(); event.stopPropagation();"
-          >
-            Products
-          </a>
-          <a
-            href="/About.html"
-            class="text-xl font-medium transition"
-            onclick="closeMobileMenu(); event.stopPropagation();"
-          >
-            About Us
-          </a>
-          <a
-            href="/contact.html"
-            class="text-xl font-medium transition"
-            onclick="closeMobileMenu(); event.stopPropagation();"
-          >
-            Contact Us
-          </a>
-        </div>
+      <!-- Mobile Menu -->
+      <div id="mobileMenu" class="md:hidden">
+        <a href="#home" onclick="closeMobileMenu()">Home</a>
+        <a href="#products" onclick="closeMobileMenu()">Products</a>
+        <a href="About.html" onclick="closeMobileMenu()">About Us</a>
+        <a href="contact.html" onclick="closeMobileMenu()">Contact Us</a>
       </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- HERO SECTION -->
     <section
       id="home"
-      class="hero-bg h-screen flex items-center justify-center text-white pt-16"
+      class="hero-bg text-white py-40 md:py-56 text-center mt-20"
     >
-      <div class="text-center px-4">
-        <h1 class="text-5xl md:text-7xl font-bold text-white mb-6">
-          Welcome to <br /><span class="text-orange-400"
-            >ZIKRIYA DARBAR FOOD PRODUCTS</span
-          >
-        </h1>
-        <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
-          Fresh, authentic spices and seafood for your shop - delivered fast
-          across Pakistan. B2B only, wholesale prices!
-        </p>
-        <button
-          onclick="scrollToProducts()"
-          class="bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-full text-lg font-semibold transition shadow-lg hover:shadow-xl"
+      <div class="max-w-4xl mx-auto px-6">
+        <h2
+          class="text-5xl md:text-7xl font-extrabold mb-6 animate-fade-in-down"
         >
-          Shop Now
-        </button>
+          Premium B2B Spices & Food
+        </h2>
+        <p class="text-xl md:text-2xl mb-8 text-gray-200">
+          Quality you can trust, flavors you'll love. Wholesale excellence since
+          2020.
+        </p>
+        <a
+          href="#products"
+          class="bg-gradient-to-r from-orange-500 to-red-600 text-white px-10 py-4 rounded-full font-bold text-lg hover:scale-110 transition-all duration-300 shadow-2xl inline-block"
+        >
+          Explore Products
+        </a>
       </div>
     </section>
 
-    <!-- Products Section -->
-    <section id="products" class="py-20 bg-white dark:bg-gray-800">
-      <div class="container mx-auto px-4">
+    <!-- PRODUCTS SECTION -->
+    <section id="products" class="py-20 px-6 bg-gray-50 dark:bg-gray-900">
+      <div class="max-w-7xl mx-auto">
         <h2
-          class="text-4xl font-bold text-center mb-12 text-gray-800 dark:text-white"
+          class="text-4xl md:text-5xl font-bold text-center mb-12 text-gray-800 dark:text-white"
         >
-          Our Fresh Products
+          Our Products
         </h2>
-        <div
-          class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4"
-        >
+
+        <!-- FILTERS -->
+        <div class="flex flex-col md:flex-row gap-4 mb-12 justify-center">
           <input
             id="search"
             type="text"
             placeholder="Search products..."
-            class="flex-1 p-3 border-2 border-gray-300 rounded-lg focus:border-orange-600 dark:bg-gray-700 dark:text-white dark:border-gray-600"
-            oninput="loadProducts()"
+            class="px-6 py-3 rounded-full border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:outline-none w-full md:w-96"
+            onkeyup="loadProducts()"
           />
           <select
             id="categoryFilter"
-            class="p-3 border-2 border-gray-300 rounded-lg focus:border-orange-600 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+            class="px-6 py-3 rounded-full border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:outline-none"
             onchange="loadProducts()"
           >
             <option value="">All Categories</option>
@@ -333,55 +304,56 @@
             <option value="Dhaniya">Dhaniya</option>
             <option value="Haldi">Haldi</option>
             <option value="Seafood">Seafood</option>
+            <option value="Vegetables">Vegetables</option>
           </select>
         </div>
 
-        <div id="loading" class="text-center py-12">
-          <i
-            class="fas fa-spinner text-4xl text-orange-500 animate-spin mb-4"
-          ></i>
-          <p class="text-gray-600 dark:text-gray-400 text-lg">
-            Loading products...
-          </p>
+        <!-- LOADING -->
+        <div id="loading" class="flex justify-center items-center py-20">
+          <div
+            class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-orange-600"
+          ></div>
         </div>
 
+        <!-- PRODUCTS GRID -->
         <div
           id="productsGrid"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 hidden"
-        >
-          <!-- Products will load here -->
-        </div>
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden"
+        ></div>
       </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8 mt-20">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid md:grid-cols-4 gap-8">
+    <!-- FOOTER -->
+    <footer class="bg-gray-800 text-white py-12">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           <div>
-            <h3 class="text-lg font-bold mb-4">
-              <span class="text-orange-400">ZIKRIYA DARBAR</span> FOOD PRODUCTS
+            <h3 class="text-xl font-bold mb-4 text-orange-500">
+              ZIKRIYA DARBAR FOOD PRODUCTS
             </h3>
-            <p class="text-gray-400">
-              Premium spices and fish for B2B. Fresh, authentic, delivered fast.
+            <p class="text-gray-400 leading-relaxed">
+              Premium B2B spices and food products. Quality you can trust,
+              flavors you'll love.
             </p>
           </div>
           <div>
             <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
             <ul class="space-y-2 text-gray-400">
-              <li><a href="/" class="hover:text-white transition">Home</a></li>
               <li>
-                <a href="/#products" class="hover:text-white transition"
+                <a href="#home" class="hover:text-white transition">Home</a>
+              </li>
+              <li>
+                <a href="#products" class="hover:text-white transition"
                   >Products</a
                 >
               </li>
               <li>
-                <a href="/About.html" class="hover:text-white transition"
+                <a href="About.html" class="hover:text-white transition"
                   >About Us</a
                 >
               </li>
               <li>
-                <a href="/contact.html" class="hover:text-white transition"
+                <a href="contact.html" class="hover:text-white transition"
                   >Contact</a
                 >
               </li>
@@ -418,7 +390,7 @@
               ></a>
             </div>
             <p class="text-sm text-gray-400 mt-4">
-              Contact: 03327372364 | Email: zdspices@gmail.com
+              Contact: 03327372364 | Email: info@zdspices.pk
             </p>
           </div>
         </div>
@@ -434,7 +406,13 @@
     </footer>
 
     <script>
-      const API_BASE = "https://api.zdspices.pk";
+      // API Configuration - Auto-detect localhost or production
+      const API_BASE = window.location.hostname.includes("zdspices.pk")
+        ? "https://api.zdspices.pk"
+        : `http://${window.location.hostname}:5000`;
+
+      console.log("API Base URL:", API_BASE);
+
       let products = [];
       let secretClickCount = 0;
       let secretClickTimer = null;
@@ -499,40 +477,37 @@
         },
         {
           _id: "5",
-          name: "Cumin Jeera - Organic",
-          description:
-            "Organic cumin seeds from trusted farmers. High-quality aroma.",
-          price: 420,
+          name: "Green Capsicum - Fresh",
+          description: "Farm-fresh green capsicum, Grade A quality.",
+          price: 320,
           discount: 0,
-          category: "Dhaniya",
-          stock: 110,
-          sku: "JEERA-001",
+          category: "Vegetables",
+          stock: 75,
+          sku: "CAPS-001",
           images: [
-            "https://images.unsplash.com/photo-1596040706957-701c23b80313?w=400",
+            "https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?w=400",
           ],
         },
         {
           _id: "6",
-          name: "Black Pepper - Premium",
-          description:
-            "High-quality black pepper with strong flavor. Perfect for all cuisines.",
-          price: 320,
+          name: "Black Pepper Kali Mirch",
+          description: "Premium black pepper with intense flavor.",
+          price: 620,
           discount: 15,
           category: "Mirch",
-          stock: 75,
-          sku: "PEPPER-001",
+          stock: 110,
+          sku: "KALI-001",
           images: [
             "https://images.unsplash.com/photo-1599599810694-b5ac1ea33e2b?w=400",
           ],
         },
         {
           _id: "7",
-          name: "Methi Seeds - Fresh",
-          description:
-            "Fresh fenugreek seeds with authentic flavor. Direct from farms.",
+          name: "Dried Fenugreek Methi",
+          description: "Sun-dried fenugreek leaves with aromatic smell.",
           price: 290,
-          discount: 5,
-          category: "Dhaniya",
+          discount: 0,
+          category: "Vegetables",
           stock: 60,
           sku: "METHI-001",
           images: [
@@ -600,10 +575,8 @@
 
         if (!menu || !btn || !navbar) return;
 
-        // اگر button یا navbar پر click ہے تو کچھ نہ کریں
         if (btn.contains(e.target) || navbar.contains(e.target)) return;
 
-        // صرف menu کے باہر click کریں تو بند کریں
         if (!menu.contains(e.target) && menuOpen) {
           closeMobileMenu();
         }
@@ -765,13 +738,8 @@
           .join("");
       }
 
-      function scrollToProducts() {
-        document
-          .getElementById("products")
-          .scrollIntoView({ behavior: "smooth" });
-      }
-
-      loadProducts();
+      // Initialize
+      window.addEventListener("DOMContentLoaded", loadProducts);
     </script>
   </body>
 </html>
