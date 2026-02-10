@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
@@ -181,6 +181,83 @@
       .mobile-menu-btn:hover i {
         color: #ea580c;
       }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.7);
+        animation: fadeIn 0.3s ease;
+      }
+
+      .modal.active {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s ease;
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .bill-container {
+        border: 2px solid #f97316;
+        padding: 20px;
+        border-radius: 8px;
+        background: #fff7ed;
+      }
+
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        .bill-container,
+        .bill-container * {
+          visibility: visible;
+        }
+        .bill-container {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+        }
+        .no-print {
+          display: none !important;
+        }
+      }
     </style>
   </head>
   <body class="bg-gray-50 min-h-screen">
@@ -195,7 +272,10 @@
               src="/images/logo.jpeg"
               alt="Logo"
               class="h-24 w-24 object-contain rounded-full shadow-2xl border-4 border-orange-500 ring-4 ring-orange-200"
-              onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%23f97316%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 fill=%22white%22%3EZD%3C/text%3E%3C/svg%3E';"
+              onerror="
+                this.src =
+                  'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%23f97316%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 fill=%22white%22%3EZD%3C/text%3E%3C/svg%3E'
+              "
             />
             <h1
               class="text-2xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-500 to-yellow-600 tracking-wide"
@@ -222,184 +302,416 @@
             <a
               href="contact.html"
               class="text-gray-700 hover:text-orange-600 font-medium transition duration-300 text-lg"
-              >Contact Us</a
+              >Contact</a
             >
           </div>
 
           <!-- Mobile Menu Button -->
           <button
-            id="mobileMenuBtn"
-            class="md:hidden mobile-menu-btn mr-4"
-            aria-label="Toggle Menu"
+            class="md:hidden mobile-menu-btn pr-4"
+            onclick="toggleMobileMenu()"
           >
-            <i class="fas fa-bars text-3xl"></i>
+            <i class="fas fa-bars text-2xl"></i>
           </button>
         </div>
       </div>
 
       <!-- Mobile Menu -->
-      <div id="mobileMenu" class="md:hidden">
+      <div id="mobileMenu">
         <a href="index.html">Home</a>
         <a href="index.html#products">Products</a>
         <a href="About.html">About Us</a>
-        <a href="contact.html">Contact Us</a>
+        <a href="contact.html">Contact</a>
       </div>
     </nav>
 
     <!-- Main Content -->
-    <div class="pt-32 pb-16 px-4 md:px-8">
-      <div id="loadingSpinner" class="flex justify-center items-center h-96">
+    <div class="pt-32 pb-20 px-4 md:px-8 max-w-7xl mx-auto">
+      <!-- Loading Spinner -->
+      <div
+        id="loadingSpinner"
+        class="flex justify-center items-center min-h-screen"
+      >
         <div
-          class="loading-spinner border-8 border-t-8 border-gray-200 border-t-orange-600 rounded-full w-16 h-16"
+          class="loading-spinner border-t-4 border-orange-500 border-solid rounded-full w-16 h-16"
         ></div>
       </div>
 
-      <div id="productContent" class="hidden max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <!-- Left Column - Images -->
+      <!-- Product Content -->
+      <div id="productContent" class="hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <!-- Left: Product Images -->
           <div class="product-image-section">
-            <div class="carousel-container rounded-lg overflow-hidden mb-4">
-              <div id="carousel" class="relative w-full h-full"></div>
-              <button
-                onclick="changeSlide(-1)"
-                class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition"
-              >
-                <i class="fas fa-chevron-left"></i>
-              </button>
-              <button
-                onclick="changeSlide(1)"
-                class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-3 rounded-full hover:bg-black/70 transition"
-              >
-                <i class="fas fa-chevron-right"></i>
-              </button>
+            <div
+              class="carousel-container rounded-lg shadow-xl mb-6"
+              id="carousel"
+            >
+              <!-- Images will be dynamically loaded -->
             </div>
 
             <!-- Thumbnails -->
             <div
               id="thumbsContainer"
-              class="flex gap-2 overflow-x-auto pb-2"
-            ></div>
+              class="flex gap-3 justify-center flex-wrap"
+            >
+              <!-- Thumbnails will be dynamically loaded -->
+            </div>
+
+            <!-- Carousel Controls -->
+            <div class="flex justify-center gap-4 mt-6">
+              <button
+                onclick="changeSlide(-1)"
+                class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg transition shadow-lg"
+              >
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button
+                onclick="changeSlide(1)"
+                class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg transition shadow-lg"
+              >
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
           </div>
 
-          <!-- Right Column - Details -->
-          <div class="bg-white rounded-lg shadow-lg p-6">
-            <span
-              id="productCategory"
-              class="inline-block bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-sm font-semibold mb-3"
-            ></span>
+          <!-- Right: Product Info -->
+          <div class="space-y-6">
+            <div>
+              <span
+                id="productCategory"
+                class="inline-block bg-orange-100 text-orange-600 px-4 py-2 rounded-full text-sm font-semibold mb-3"
+              ></span>
+              <h1
+                id="productName"
+                class="text-4xl md:text-5xl font-bold text-gray-800"
+              ></h1>
+            </div>
 
-            <h1
-              id="productName"
-              class="text-4xl font-bold mb-4 text-gray-800"
-            ></h1>
-
-            <div class="flex items-baseline gap-4 mb-4">
+            <div class="flex items-baseline gap-4">
               <span
                 id="productPrice"
-                class="text-3xl font-bold text-green-600"
+                class="text-4xl font-bold text-orange-600 price-animate"
               ></span>
               <span
                 id="productDiscount"
-                class="text-xl text-gray-400 line-through"
+                class="text-2xl text-gray-400 line-through"
               ></span>
             </div>
 
-            <div class="flex items-center mb-4">
-              <div class="flex text-yellow-400 mr-2">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-              </div>
-              <span class="text-gray-600">(4.8/5)</span>
-            </div>
-
-            <div
-              id="productDescription"
-              class="text-gray-700 mb-6 leading-relaxed"
-            ></div>
-
             <!-- Stock Info -->
-            <div class="mb-6">
-              <div class="flex justify-between items-center mb-2">
+            <div>
+              <div class="flex justify-between mb-2">
+                <span class="text-sm font-medium text-gray-700"
+                  >Availability:</span
+                >
                 <span
                   id="productStock"
-                  class="text-green-600 font-semibold"
+                  class="text-sm font-semibold text-green-600"
                 ></span>
-                <span class="text-sm text-gray-500"
-                  ><span id="maxStock"></span> units available</span
-                >
               </div>
-              <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                 <div
                   id="stockBar"
-                  class="stock-bar bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full"
+                  class="stock-bar bg-gradient-to-r from-green-400 to-green-600 h-3 rounded-full"
                   style="width: 0%"
                 ></div>
+              </div>
+              <p class="text-xs text-gray-500 mt-1">
+                <span id="maxStock"></span> units available
+              </p>
+            </div>
+
+            <!-- Description -->
+            <div class="border-t border-b border-gray-200 py-6">
+              <h3 class="text-xl font-semibold mb-3 text-gray-800">
+                Description
+              </h3>
+              <p
+                id="productDescription"
+                class="text-gray-600 leading-relaxed"
+              ></p>
+            </div>
+
+            <!-- Product Details -->
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span class="text-gray-500">SKU:</span>
+                <span
+                  id="productSKU"
+                  class="font-semibold text-gray-800 ml-2"
+                ></span>
+              </div>
+              <div>
+                <span class="text-gray-500">Category:</span>
+                <span
+                  id="productCat2"
+                  class="font-semibold text-gray-800 ml-2"
+                ></span>
               </div>
             </div>
 
             <!-- Quantity Selector -->
-            <div class="flex items-center gap-4 mb-6">
-              <label class="font-semibold text-gray-700">Quantity:</label>
-              <div class="flex items-center border border-gray-300 rounded-lg">
+            <div class="flex items-center gap-4">
+              <span class="text-gray-700 font-medium">Quantity:</span>
+              <div
+                class="flex items-center border-2 border-gray-300 rounded-lg overflow-hidden"
+              >
                 <button
                   id="minusBtn"
                   onclick="changeQty(-1)"
-                  class="px-4 py-2 text-xl hover:bg-gray-100 transition"
+                  class="bg-gray-200 hover:bg-gray-300 px-4 py-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  -
+                  <i class="fas fa-minus"></i>
                 </button>
                 <input
                   id="qtyInput"
                   type="number"
                   value="1"
                   min="1"
-                  class="w-16 text-center border-x border-gray-300 py-2 outline-none"
                   onchange="updateQty()"
+                  class="w-20 text-center py-2 border-l border-r border-gray-300 focus:outline-none"
                 />
                 <button
                   id="plusBtn"
                   onclick="changeQty(1)"
-                  class="px-4 py-2 text-xl hover:bg-gray-100 transition"
+                  class="bg-gray-200 hover:bg-gray-300 px-4 py-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  +
+                  <i class="fas fa-plus"></i>
                 </button>
               </div>
             </div>
 
             <!-- Action Buttons -->
-            <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="flex flex-col sm:flex-row gap-4">
               <button
-                onclick="buyNow()"
-                class="bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition shadow-lg"
+                onclick="addToCart()"
+                class="flex-1 bg-gray-800 hover:bg-gray-900 text-white font-semibold py-4 px-8 rounded-lg transition shadow-lg"
               >
-                <i class="fas fa-bolt mr-2"></i>Buy Now
+                <i class="fas fa-shopping-cart mr-2"></i>
+                Add to Cart
+              </button>
+              <button
+                onclick="showOrderModal()"
+                class="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-4 px-8 rounded-lg transition shadow-lg"
+              >
+                <i class="fas fa-bolt mr-2"></i>
+                Buy Now
               </button>
             </div>
 
+            <!-- Download PDF -->
             <button
               onclick="downloadPDF()"
-              class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition shadow-lg"
+              class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition shadow-lg"
             >
-              <i class="fas fa-download mr-2"></i>Download Details (PDF)
+              <i class="fas fa-download mr-2"></i>
+              Download Product Details (PDF)
             </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-            <!-- Product Info -->
-            <div class="mt-6 border-t pt-4">
-              <div class="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span class="text-gray-500">SKU:</span>
-                  <span id="productSKU" class="font-semibold ml-2"></span>
-                </div>
-                <div>
-                  <span class="text-gray-500">Category:</span>
-                  <span id="productCat2" class="font-semibold ml-2"></span>
-                </div>
-              </div>
+    <!-- Order Modal -->
+    <div id="orderModal" class="modal">
+      <div class="modal-content">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-gray-800">
+            <i class="fas fa-clipboard-list text-orange-500 mr-2"></i>
+            Order Details
+          </h2>
+          <button
+            onclick="closeOrderModal()"
+            class="text-gray-500 hover:text-gray-700"
+          >
+            <i class="fas fa-times text-2xl"></i>
+          </button>
+        </div>
+
+        <form id="orderForm" class="space-y-4">
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">
+              <i class="fas fa-user text-orange-500 mr-2"></i>
+              Your Name *
+            </label>
+            <input
+              type="text"
+              id="customerName"
+              required
+              class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none"
+              placeholder="Enter your name"
+            />
+          </div>
+
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">
+              <i class="fas fa-store text-orange-500 mr-2"></i>
+              Shop Name *
+            </label>
+            <input
+              type="text"
+              id="shopName"
+              required
+              class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none"
+              placeholder="Enter shop name"
+            />
+          </div>
+
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">
+              <i class="fas fa-phone text-orange-500 mr-2"></i>
+              Phone Number *
+            </label>
+            <input
+              type="tel"
+              id="phoneNumber"
+              required
+              pattern="[0-9]{11}"
+              class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none"
+              placeholder="03XXXXXXXXX"
+            />
+          </div>
+
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">
+              <i class="fas fa-map-marker-alt text-orange-500 mr-2"></i>
+              Delivery Address *
+            </label>
+            <textarea
+              id="address"
+              required
+              rows="3"
+              class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none"
+              placeholder="Enter complete delivery address"
+            ></textarea>
+          </div>
+
+          <div class="flex gap-4 mt-6">
+            <button
+              type="button"
+              onclick="closeOrderModal()"
+              class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 px-6 rounded-lg transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-3 px-6 rounded-lg transition"
+            >
+              <i class="fas fa-check mr-2"></i>
+              Confirm Order
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Bill Modal -->
+    <div id="billModal" class="modal">
+      <div class="modal-content">
+        <div id="billContent" class="bill-container">
+          <!-- Bill header -->
+          <div class="text-center mb-6 border-b-2 border-orange-500 pb-4">
+            <h1 class="text-3xl font-bold text-orange-600">
+              ZIKRIYA DARBAR FOOD PRODUCTS
+            </h1>
+            <p class="text-sm text-gray-600 mt-2">Order Invoice</p>
+            <p class="text-xs text-gray-500" id="billDate"></p>
+          </div>
+
+          <!-- Customer Details -->
+          <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
+            <div>
+              <p class="font-semibold text-gray-700">Customer Name:</p>
+              <p id="billCustomerName" class="text-gray-600"></p>
+            </div>
+            <div>
+              <p class="font-semibold text-gray-700">Shop Name:</p>
+              <p id="billShopName" class="text-gray-600"></p>
+            </div>
+            <div>
+              <p class="font-semibold text-gray-700">Phone Number:</p>
+              <p id="billPhoneNumber" class="text-gray-600"></p>
+            </div>
+            <div>
+              <p class="font-semibold text-gray-700">Order ID:</p>
+              <p id="billOrderId" class="text-gray-600"></p>
             </div>
           </div>
+
+          <div class="mb-6 text-sm">
+            <p class="font-semibold text-gray-700">Delivery Address:</p>
+            <p id="billAddress" class="text-gray-600"></p>
+          </div>
+
+          <!-- Order Items -->
+          <div class="border-t-2 border-gray-300 pt-4 mb-6">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b-2 border-gray-300">
+                  <th class="text-left py-2">Product</th>
+                  <th class="text-center py-2">Qty</th>
+                  <th class="text-right py-2">Price</th>
+                  <th class="text-right py-2">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b border-gray-200">
+                  <td class="py-3" id="billProductName"></td>
+                  <td class="text-center py-3" id="billQuantity"></td>
+                  <td class="text-right py-3" id="billUnitPrice"></td>
+                  <td
+                    class="text-right py-3 font-semibold"
+                    id="billTotalPrice"
+                  ></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Total -->
+          <div class="border-t-2 border-orange-500 pt-4 mb-6">
+            <div class="flex justify-between items-center">
+              <p class="text-xl font-bold text-gray-800">Grand Total:</p>
+              <p
+                class="text-2xl font-bold text-orange-600"
+                id="billGrandTotal"
+              ></p>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div
+            class="text-center text-xs text-gray-500 border-t border-gray-300 pt-4"
+          >
+            <p class="font-semibold mb-1">Thank you for your order!</p>
+            <p>For queries, contact us at: 0300-1234567</p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-4 mt-6 no-print">
+          <button
+            onclick="printBill()"
+            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition"
+          >
+            <i class="fas fa-print mr-2"></i>
+            Print Bill
+          </button>
+          <button
+            onclick="downloadBillPDF()"
+            class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition"
+          >
+            <i class="fas fa-download mr-2"></i>
+            Download PDF
+          </button>
+          <button
+            onclick="closeBillModal()"
+            class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition"
+          >
+            <i class="fas fa-times mr-2"></i>
+            Close
+          </button>
         </div>
       </div>
     </div>
@@ -407,197 +719,88 @@
     <!-- Toast Notification -->
     <div
       id="toast"
-      class="fixed top-24 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg hidden toast z-50"
+      class="hidden fixed top-24 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-xl toast z-50"
     >
-      <i class="fas fa-check-circle mr-2"></i>
-      <span id="toastMessage"></span>
+      <p id="toastMessage"></p>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-12">
-      <div class="max-w-7xl mx-auto px-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+    <footer
+      class="bg-gradient-to-r from-orange-600 to-red-600 text-white py-12"
+    >
+      <div class="max-w-7xl mx-auto px-4 md:px-8">
+        <div
+          class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left"
+        >
           <div>
-            <h3 class="text-xl font-bold mb-4 text-orange-500">
-              ZIKRIYA DARBAR FOOD PRODUCTS
-            </h3>
-            <p class="text-gray-400 leading-relaxed">
-              Premium B2B spices and food products. Quality you can trust,
-              flavors you'll love.
-            </p>
+            <h3 class="text-2xl font-bold mb-4">ZIKRIYA DARBAR</h3>
+            <p class="text-orange-100">Premium Quality Food Products</p>
           </div>
           <div>
-            <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul class="space-y-2 text-gray-400">
+            <h4 class="text-xl font-semibold mb-4">Quick Links</h4>
+            <ul class="space-y-2">
               <li>
-                <a href="index.html" class="hover:text-white transition"
+                <a href="index.html" class="hover:text-orange-200 transition"
                   >Home</a
                 >
               </li>
               <li>
                 <a
                   href="index.html#products"
-                  class="hover:text-white transition"
+                  class="hover:text-orange-200 transition"
                   >Products</a
                 >
               </li>
               <li>
-                <a href="About.html" class="hover:text-white transition"
-                  >About Us</a
+                <a href="About.html" class="hover:text-orange-200 transition"
+                  >About</a
                 >
               </li>
               <li>
-                <a href="contact.html" class="hover:text-white transition"
+                <a href="contact.html" class="hover:text-orange-200 transition"
                   >Contact</a
                 >
               </li>
             </ul>
           </div>
           <div>
-            <h4 class="text-lg font-semibold mb-4">Support</h4>
-            <ul class="space-y-2 text-gray-400">
-              <li><a href="#" class="hover:text-white transition">FAQ</a></li>
-              <li>
-                <a href="#" class="hover:text-white transition">Shipping</a>
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition">Returns</a>
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition"
-                  >Privacy Policy</a
-                >
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-lg font-semibold mb-4">Follow Us</h4>
-            <div class="flex space-x-4">
-              <a href="#" class="text-gray-400 hover:text-white transition"
-                ><i class="fab fa-facebook-f text-xl"></i
-              ></a>
-              <a href="#" class="text-gray-400 hover:text-white transition"
-                ><i class="fab fa-instagram text-xl"></i
-              ></a>
-              <a href="#" class="text-gray-400 hover:text-white transition"
-                ><i class="fab fa-twitter text-xl"></i
-              ></a>
-            </div>
-            <p class="text-sm text-gray-400 mt-4">
-              Contact: 03327372364 | Email: info@zdspices.pk
+            <h4 class="text-xl font-semibold mb-4">Contact Us</h4>
+            <p class="text-orange-100">
+              <i class="fas fa-phone mr-2"></i>+92-300-1234567
+            </p>
+            <p class="text-orange-100 mt-2">
+              <i class="fas fa-envelope mr-2"></i>info@zikriyadarbar.com
             </p>
           </div>
         </div>
         <div
-          class="border-t border-gray-700 mt-8 pt-4 text-center text-gray-400"
+          class="border-t border-orange-400 mt-8 pt-8 text-center text-orange-100"
         >
-          <p>
-            © 2025 ZIKRIYA DARBAR FOOD PRODUCTS. All rights reserved. | Made
-            with love in Pakistan
-          </p>
+          <p>&copy; 2025 ZIKRIYA DARBAR FOOD PRODUCTS. All rights reserved.</p>
         </div>
       </div>
     </footer>
 
     <script>
-      // API Configuration - Auto-detect localhost or production
-      const API_BASE = window.location.hostname.includes("zdspices.pk")
-        ? "https://api.zdspices.pk"
-        : `http://${window.location.hostname}:5000`;
-
-      console.log("API Base URL:", API_BASE);
-
+      const API_BASE = "https://zikriya-darbar-backend.vercel.app";
       let currentProduct = null;
       let currentSlide = 0;
       let qty = 1;
-      let menuOpen = false;
+      let orderData = {};
 
-      // Mobile Menu Functions - FIXED
-      function toggleMobileMenu(event) {
-        if (event) {
-          event.stopPropagation();
-        }
-
+      // Mobile Menu Toggle
+      function toggleMobileMenu() {
         const menu = document.getElementById("mobileMenu");
-        const btn = document.getElementById("mobileMenuBtn");
-
-        if (!menu || !btn) return;
-
-        menuOpen = !menuOpen;
-
-        if (menuOpen) {
-          menu.classList.remove("closing");
-          menu.classList.add("active");
-          btn.innerHTML = '<i class="fas fa-times text-3xl"></i>';
-        } else {
+        if (menu.classList.contains("active")) {
           menu.classList.add("closing");
           setTimeout(() => {
-            menu.classList.remove("active");
-            menu.classList.remove("closing");
-            btn.innerHTML = '<i class="fas fa-bars text-3xl"></i>';
+            menu.classList.remove("active", "closing");
           }, 300);
+        } else {
+          menu.classList.add("active");
         }
       }
 
-      function closeMobileMenu() {
-        const menu = document.getElementById("mobileMenu");
-        const btn = document.getElementById("mobileMenuBtn");
-
-        if (!menu || !btn || !menuOpen) return;
-
-        menuOpen = false;
-        menu.classList.add("closing");
-        setTimeout(() => {
-          menu.classList.remove("active");
-          menu.classList.remove("closing");
-          btn.innerHTML = '<i class="fas fa-bars text-3xl"></i>';
-        }, 300);
-      }
-
-      // Setup mobile menu with proper event handling
-      document.addEventListener("DOMContentLoaded", function () {
-        const mobileMenuBtn = document.getElementById("mobileMenuBtn");
-        const mobileMenu = document.getElementById("mobileMenu");
-
-        if (mobileMenuBtn) {
-          mobileMenuBtn.addEventListener("click", toggleMobileMenu);
-        }
-
-        // Close menu when clicking on menu links
-        if (mobileMenu) {
-          const menuLinks = mobileMenu.querySelectorAll("a");
-          menuLinks.forEach((link) => {
-            link.addEventListener("click", closeMobileMenu);
-          });
-        }
-
-        // Close menu when clicking outside - but not immediately
-        document.addEventListener("click", function (e) {
-          if (!mobileMenu || !mobileMenuBtn) return;
-
-          // Check if click is outside both menu and button
-          if (
-            !mobileMenu.contains(e.target) &&
-            !mobileMenuBtn.contains(e.target) &&
-            menuOpen
-          ) {
-            closeMobileMenu();
-          }
-        });
-
-        // Close menu on scroll
-        let scrollTimeout;
-        window.addEventListener("scroll", function () {
-          if (menuOpen) {
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-              closeMobileMenu();
-            }, 100);
-          }
-        });
-      });
-
-      // Get image URL with proper fallback
       function getImageUrl(img) {
         if (!img)
           return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Crect width='500' height='500' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
@@ -655,9 +858,8 @@
         const discount = currentProduct.discount || 0;
         const discountedPrice = price * (1 - discount / 100);
 
-        document.getElementById(
-          "productPrice"
-        ).textContent = `Rs ${discountedPrice.toFixed(0)}`;
+        document.getElementById("productPrice").textContent =
+          `Rs ${discountedPrice.toFixed(0)}`;
         document.getElementById("productDiscount").textContent =
           discount > 0 ? `Rs ${price.toFixed(0)}` : "";
 
@@ -692,9 +894,9 @@
           .map(
             (img, i) => `
           <img src="${img}" alt="Product" class="carousel-img absolute inset-0" style="display: ${
-              i === 0 ? "block" : "none"
-            };" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22500%22 height=%22500%22%3E%3Crect width=%22500%22 height=%22500%22 fill=%22%23e5e7eb%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 fill=%22%239ca3af%22%3ENo Image%3C/text%3E%3C/svg%3E';">
-        `
+            i === 0 ? "block" : "none"
+          };" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22500%22 height=%22500%22%3E%3Crect width=%22500%22 height=%22500%22 fill=%22%23e5e7eb%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 fill=%22%239ca3af%22%3ENo Image%3C/text%3E%3C/svg%3E';">
+        `,
           )
           .join("");
 
@@ -707,7 +909,7 @@
             } hover:border-orange-500 transition"
             onclick="jumpToSlide(${i})"
             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%23e5e7eb%22/%3E%3C/svg%3E';">
-        `
+        `,
           )
           .join("");
       }
@@ -775,12 +977,180 @@
         showToast(`${qty} x ${currentProduct.name} added to cart!`);
       }
 
-      function buyNow() {
+      function showOrderModal() {
         if (!currentProduct) return;
-        showToast(`Proceeding to checkout with ${qty} items...`);
-        setTimeout(() => {
-          window.location.href = "contact.html";
-        }, 1500);
+        const stock = currentProduct.stock || 0;
+        if (stock === 0) {
+          showToast("Product out of stock!");
+          return;
+        }
+        document.getElementById("orderModal").classList.add("active");
+      }
+
+      function closeOrderModal() {
+        document.getElementById("orderModal").classList.remove("active");
+        document.getElementById("orderForm").reset();
+      }
+
+      // Order Form Submission
+      document
+        .getElementById("orderForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const customerName = document
+            .getElementById("customerName")
+            .value.trim();
+          const shopName = document.getElementById("shopName").value.trim();
+          const phoneNumber = document
+            .getElementById("phoneNumber")
+            .value.trim();
+          const address = document.getElementById("address").value.trim();
+
+          if (!customerName || !shopName || !phoneNumber || !address) {
+            showToast("Please fill all required fields!");
+            return;
+          }
+
+          // Store order data
+          orderData = {
+            customerName,
+            shopName,
+            phoneNumber,
+            address,
+            product: currentProduct.name,
+            quantity: qty,
+            unitPrice:
+              currentProduct.price * (1 - (currentProduct.discount || 0) / 100),
+            totalPrice:
+              qty *
+              currentProduct.price *
+              (1 - (currentProduct.discount || 0) / 100),
+            orderId: "ORD-" + Date.now(),
+            date: new Date().toLocaleString("en-US", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          };
+
+          closeOrderModal();
+          showBill();
+
+          // Confetti effect
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+          });
+        });
+
+      function showBill() {
+        // Populate bill details
+        document.getElementById("billDate").textContent = orderData.date;
+        document.getElementById("billCustomerName").textContent =
+          orderData.customerName;
+        document.getElementById("billShopName").textContent =
+          orderData.shopName;
+        document.getElementById("billPhoneNumber").textContent =
+          orderData.phoneNumber;
+        document.getElementById("billOrderId").textContent = orderData.orderId;
+        document.getElementById("billAddress").textContent = orderData.address;
+        document.getElementById("billProductName").textContent =
+          orderData.product;
+        document.getElementById("billQuantity").textContent =
+          orderData.quantity;
+        document.getElementById("billUnitPrice").textContent =
+          `Rs ${orderData.unitPrice.toFixed(0)}`;
+        document.getElementById("billTotalPrice").textContent =
+          `Rs ${orderData.totalPrice.toFixed(0)}`;
+        document.getElementById("billGrandTotal").textContent =
+          `Rs ${orderData.totalPrice.toFixed(0)}`;
+
+        // Show bill modal
+        document.getElementById("billModal").classList.add("active");
+      }
+
+      function closeBillModal() {
+        document.getElementById("billModal").classList.remove("active");
+      }
+
+      function printBill() {
+        window.print();
+      }
+
+      function downloadBillPDF() {
+        try {
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF();
+
+          // Header
+          doc.setFontSize(20);
+          doc.setTextColor(249, 115, 22);
+          doc.text("ZIKRIYA DARBAR FOOD PRODUCTS", 105, 20, {
+            align: "center",
+          });
+
+          doc.setFontSize(12);
+          doc.setTextColor(0, 0, 0);
+          doc.text("Order Invoice", 105, 30, { align: "center" });
+          doc.text(orderData.date, 105, 37, { align: "center" });
+
+          // Customer Details
+          doc.setFontSize(11);
+          let y = 50;
+          doc.text(`Customer Name: ${orderData.customerName}`, 20, y);
+          doc.text(`Shop Name: ${orderData.shopName}`, 20, y + 7);
+          doc.text(`Phone: ${orderData.phoneNumber}`, 20, y + 14);
+          doc.text(`Order ID: ${orderData.orderId}`, 20, y + 21);
+          doc.text(`Address: ${orderData.address}`, 20, y + 28);
+
+          // Order Items
+          y = 100;
+          doc.setFontSize(12);
+          doc.text("Product", 20, y);
+          doc.text("Qty", 100, y);
+          doc.text("Price", 130, y);
+          doc.text("Total", 170, y);
+
+          doc.line(20, y + 2, 190, y + 2);
+
+          y += 10;
+          doc.setFontSize(11);
+          doc.text(orderData.product, 20, y);
+          doc.text(String(orderData.quantity), 100, y);
+          doc.text(`Rs ${orderData.unitPrice.toFixed(0)}`, 130, y);
+          doc.text(`Rs ${orderData.totalPrice.toFixed(0)}`, 170, y);
+
+          // Total
+          y += 15;
+          doc.line(20, y, 190, y);
+          y += 10;
+          doc.setFontSize(14);
+          doc.setTextColor(249, 115, 22);
+          doc.text(
+            `Grand Total: Rs ${orderData.totalPrice.toFixed(0)}`,
+            190,
+            y,
+            { align: "right" },
+          );
+
+          // Footer
+          doc.setFontSize(10);
+          doc.setTextColor(100, 100, 100);
+          doc.text("Thank you for your order!", 105, 270, { align: "center" });
+          doc.text("For queries, contact us at: 0300-1234567", 105, 277, {
+            align: "center",
+          });
+
+          doc.save(`Invoice_${orderData.orderId}.pdf`);
+          showToast("Bill PDF downloaded successfully!");
+        } catch (error) {
+          console.error("PDF Error:", error);
+          showToast("Error downloading PDF");
+        }
       }
 
       function showToast(message) {
@@ -823,12 +1193,11 @@
           showToast("PDF downloaded successfully!");
         } catch (error) {
           console.error("PDF Error:", error);
-          showToast("Error generating PDF");
+          showToast("Error downloading PDF");
         }
       }
 
-      // Initialize
-      window.addEventListener("DOMContentLoaded", loadProduct);
+      window.onload = loadProduct;
     </script>
   </body>
 </html>
