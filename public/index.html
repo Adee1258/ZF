@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ZIKRIYA DARBAR FOOD PRODUCTS - Premium B2B Spices & Food</title>
+    <title>ZIKRIYA DARBAR FOOD PRODUCTS - Premium Spices & Food</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -22,7 +22,8 @@
     </script>
     <style>
       .hero-bg {
-        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        background:
+          linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
           url("https://thumbs.dreamstime.com/b/dry-colorful-spices-spoons-bowls-fresh-seasoning-dark-rustic-wooden-background-top-view-border-59439636.jpg");
         background-size: cover;
       }
@@ -195,7 +196,11 @@
               alt="ZIKRIYA DARBAR FOOD PRODUCTS Logo"
               class="h-24 w-24 object-contain rounded-full shadow-2xl border-4 border-orange-500 ring-4 ring-orange-200 cursor-pointer"
               onclick="handleSecretAdminAccess()"
-              onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%23f97316%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 fill=%22white%22%3EZD%3C/text%3E%3C/svg%3E';"
+              onerror="
+                this.onerror = null;
+                this.src =
+                  'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%23f97316%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 fill=%22white%22%3EZD%3C/text%3E%3C/svg%3E';
+              "
             />
             <h1
               class="text-2xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-500 to-yellow-600 tracking-wide"
@@ -657,7 +662,7 @@
         let filtered = products.filter(
           (p) =>
             p.name.toLowerCase().includes(search) &&
-            (!category || p.category === category)
+            (!category || p.category === category),
         );
 
         loading.classList.add("hidden");
@@ -692,8 +697,8 @@
                 
                 <div class="product-img-container">
                   <img src="${firstImg}" alt="${
-              p.name
-            }" class="product-img" onerror="this.src='${getPlaceholderImage()}'">
+                    p.name
+                  }" class="product-img" onerror="this.src='${getPlaceholderImage()}'">
                 </div>
                 
                 <div class="p-6">
@@ -704,7 +709,7 @@
                   
                   <div class="flex justify-between items-center mb-4">
                     <span class="text-2xl font-bold text-green-600">Rs ${discountedPrice.toFixed(
-                      0
+                      0,
                     )}</span>
                     ${
                       p.discount > 0
